@@ -6,8 +6,7 @@
 
 ## 特性
 
-- “并行”执行 iFLOW CLI;
-- 基于 Docker/VM 的天然隔离环境执行 iFLOW CLI;
+- 基于 Docker/VM 的天然隔离环境执行 iFLOW CLI, “并行”执行 iFLOW CLI;
 - 甚至可以通过 [Self-hosted runners](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners) 调度到自己的机器上;
 - “天然”的移动端支持, 移动端 GitHub APP 对话式触发 iFLOW CLI 执行任务, 处理您的 GitHub 代码库 issues、PRs;
 - **iFLOW CLI 执行摘要报告集成**：在 GitHub Actions 执行历史中格式化 iFLOW CLI 执行日志信息.
@@ -168,7 +167,7 @@ sequenceDiagram
 
 ## 更多示例工作流
 
-[examples](../examples) 目录中提供了完整基于 GitHub issues、GitHub Pull Requests 更多使用场景的自动化工作流程编排文件 (比如: 自动修复 BUG issue、自动评审等), 您可以直接拷贝到您代码仓库的 `.github/workflows` 目录中直接使用.
+[examples](../examples) 目录中提供了完整基于 GitHub issues、GitHub Pull Requests 更多使用场景的自动化工作流程编排文件 (比如: [自动处理 issue](https://github.com/iflow-ai/iflow-cli-action/pull/26)、自动评审等), 您可以直接拷贝到您代码仓库的 `.github/workflows` 目录中直接使用.
 
 ## 最佳实践
 
@@ -193,6 +192,10 @@ GitHub 提供了移动端的 APP (您可以在 iOS APP Store 或者 Google Play 
 ### GitHub Actions 使用成本
 
 GitHub Actions 对于个人账号和组织账号均有不同的免费额度, 详情请查阅 [GitHub Actions 的计费文档](https://docs.github.com/zh/billing/concepts/product-billing/github-actions).
+
+### 通过传统的自动化手段去兜底代码质量
+
+AI 生成的内容面对复杂任务仍然会出现不可靠行为, 传统的单元测试、集成测试、代码扫描自动化工作流仍然非常有用. 代码评审时, 仍然需要这些工具 + 人工审阅去确保代码质量.
 
 ## 故障排查
 
