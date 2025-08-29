@@ -195,6 +195,8 @@ jobs:
 
 ### 可用模型
 
+[Models](https://platform.iflow.cn/docs/api-mode)
+
 - `Qwen3-Coder`（默认）- 适用于代码分析和生成
 - `Kimi-K2` - 适用于通用 AI 任务和更长的上下文
 - `DeepSeek-V3` - 高级推理和问题解决

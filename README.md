@@ -194,6 +194,8 @@ jobs:
 
 ### Available Models
 
+[Models](https://platform.iflow.cn/docs/api-mode)
+
 - `Qwen3-Coder` (default) - Excellent for code analysis and generation
 - `Kimi-K2` - Good for general AI tasks and longer contexts
 - `DeepSeek-V3` - Advanced reasoning and problem-solving
