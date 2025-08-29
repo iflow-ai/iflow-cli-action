@@ -6,6 +6,17 @@ model: claude-sonnet-4-20250514
 
 # Focus Areas
 
+<!-- TOC start -->
+## Table of Contents
+
+- [Approach](#approach)
+- [Quality Checklist](#quality-checklist)
+- [Output](#output)
+
+[Back to Table of Contents](README.md#table-of-contents)
+<!-- TOC end -->
+
+
 - Concurrency with goroutines and channels
 - Designing interfaces for extensibility
 - Error handling with idiomatic Go practices

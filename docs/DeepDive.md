@@ -1,5 +1,24 @@
 # AI Works 效率提升 - iFlow CLI Action 使用攻略
 
+<!-- TOC start -->
+## Table of Contents
+
+- [特性](#特性)
+- [快速开始](#快速开始)
+- [更多示例工作流](#更多示例工作流)
+  - [IFLOW.md](#iflowmd)
+  - [善于使用 GitHub 移动端](#善于使用-github-移动端)
+  - [安全考虑](#安全考虑)
+  - [GitHub Actions 使用成本](#github-actions-使用成本)
+- [故障排查](#故障排查)
+  - [iFLOW CLI 执行摘要报告](#iflow-cli-执行摘要报告)
+  - [超时](#超时)
+- [社区使用案例](#社区使用案例)
+
+[Back to Table of Contents](README.md#table-of-contents)
+<!-- TOC end -->
+
+
 通过 iFLOW CLI Action，可以让 [iFLOW CLI](https://platform.iflow.cn/cli/quickstart) 化身为您的 GitHub 开源项目开发伙伴. 您可以自定义任意灵活多变的工作流，智能化 & 自动化处理 issues、PRs、README 文档等.
 
 您也可以通过对话式的方式触发 iFLOW CLI 的执行, 比如在 bug issue 中评论 `@iflow-cli fix this issue` 即可触发智能化工作流帮您修复 BUG.
@@ -175,7 +194,7 @@ sequenceDiagram
 
 在您的仓库根目录中创建一个 IFLOW.md 文件来定义代码风格指南、代码评审标准、项目特定规则. 此文件将指导 iFLOW CLI 理解您的项目标准. 同时可以更便于 iFLOW CLI Action 执行自动化任务.
 
-### 移动端使用
+### 善于使用 GitHub 移动端
 
 GitHub 提供了移动端的 APP (您可以在 iOS APP Store 或者 Google Play 应用商店下载 [https://github.com/mobile](https://github.com/mobile)) 方便我们在手机移动端也可以管理代码仓库, 处理 issues 或者进行代码评审任务. 同样我们也可以通过 APP 随时随地的触发我们的 iFLOW CLI 智能自动化工作流.
 
@@ -212,6 +231,6 @@ iFLOW CLI Action 默认会控制自动化任务的执行时间在 3600 秒 (一�
 ## 社区使用案例
 
 - [使用 iflow-cli-action 在 GitHub 与 Qwen3-Coder、Kimi K2 一起快速提升你的生产力](https://shan333.cn/2025/08/16/the-next-level-of-developer-productivity-with-iflow-cli-action/)
-- [定时生成不同风格周刊列表网站](https://awesome-tech-weekly-zh.netlify.app/)
+- [定时生成不同设计风格周刊列表网站](https://awesome-tech-weekly-zh.netlify.app/)
 
 > 欢迎提交您的使用案例

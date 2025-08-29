@@ -1,5 +1,40 @@
 # 🤖 iFlow CLI GitHub Action
 
+<!-- TOC start -->
+## Table of Contents
+
+- [Features](#features)
+- [Usage](#usage)
+  - [Basic Example](#basic-example)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Authentication](#authentication)
+  - [Getting an iFlow API Key](#getting-an-iflow-api-key)
+  - [Available Models](#available-models)
+- [Custom Configuration](#custom-configuration)
+  - [Using Extra Arguments](#using-extra-arguments)
+    - [Examples of Extra Arguments](#examples-of-extra-arguments)
+  - [Using Pre-Execution Commands](#using-pre-execution-commands)
+    - [Multi-line Commands](#multi-line-commands)
+    - [Quoted Arguments](#quoted-arguments)
+  - [Using Custom Settings](#using-custom-settings)
+- [Using MCP Servers](#using-mcp-servers)
+  - [Example: Using DeepWiki MCP Server](#example-using-deepwiki-mcp-server)
+  - [When to Use MCP Servers](#when-to-use-mcp-servers)
+- [Common Use Cases](#common-use-cases)
+  - [Code Analysis and Review](#code-analysis-and-review)
+  - [Documentation Generation](#documentation-generation)
+  - [Automated Testing Suggestions](#automated-testing-suggestions)
+  - [Architecture Analysis](#architecture-analysis)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues](#common-issues)
+  - [Debug Mode](#debug-mode)
+- [Contributing](#contributing)
+- [License](#license)
+- [Related](#related)
+<!-- TOC end -->
+
+
 A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/iflow-cli) commands within your GitHub workflows. This Docker-based action comes with Node.js 22, npm, and uv (ultra-fast Python package manager) pre-installed for optimal performance, and executes your specified commands using the iFlow CLI.
 
 - [中文文档](README_zh.md)
@@ -158,6 +193,8 @@ jobs:
 4. Add the API key to your GitHub repository secrets as `IFLOW_API_KEY`
 
 ### Available Models
+
+[Models](https://platform.iflow.cn/docs/api-mode)
 
 - `Qwen3-Coder` (default) - Excellent for code analysis and generation
 - `Kimi-K2` - Good for general AI tasks and longer contexts

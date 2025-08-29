@@ -1,5 +1,32 @@
 # Example Workflows
 
+<!-- TOC start -->
+## Table of Contents
+
+- [Basic Examples](#basic-examples)
+  - [Code Review on Pull Request](#code-review-on-pull-request)
+  - [Documentation Generation](#documentation-generation)
+  - [Using Extra Arguments](#using-extra-arguments)
+  - [Security Analysis](#security-analysis)
+- [Advanced Examples](#advanced-examples)
+  - [Multi-step Analysis](#multi-step-analysis)
+- [Configuration Examples](#configuration-examples)
+  - [Custom Model Configuration](#custom-model-configuration)
+  - [Extended Timeout for Complex Tasks](#extended-timeout-for-complex-tasks)
+  - [Different Working Directory](#different-working-directory)
+- [Additional Workflows](#additional-workflows)
+  - [Issue Killer](#issue-killer)
+  - [Issue Triage](#issue-triage)
+  - [PR Review Killer](#pr-review-killer)
+- [Execution Mechanism](#execution-mechanism)
+  - [Issue Killer Execution](#issue-killer-execution)
+  - [Issue Triage Execution](#issue-triage-execution)
+  - [PR Review Execution](#pr-review-execution)
+  - [PR Review Killer Execution](#pr-review-killer-execution)
+- [Setup Instructions](#setup-instructions)
+<!-- TOC end -->
+
+
 This directory contains example GitHub Actions workflows demonstrating how to use the iFlow CLI Action.
 
 **Note:** All iFlow CLI commands are automatically executed with `--prompt` and `--yolo` flags for non-interactive, streamlined operation.

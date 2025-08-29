@@ -1,5 +1,28 @@
 # Changelog
 
+<!-- TOC start -->
+## Table of Contents
+
+- [[Unreleased]](#unreleased)
+  - [Added](#added)
+  - [Changed](#changed)
+- [[1.3.0] - 2025-08-16](#130-2025-08-16)
+  - [Added](#added)
+  - [Changed](#changed)
+- [[1.2.0] - 2025-08-02](#120-2025-08-02)
+  - [Added](#added)
+  - [Changed](#changed)
+- [[1.1.0] - 2025-07-30](#110-2025-07-30)
+  - [Added](#added)
+  - [Changed](#changed)
+  - [Refactored](#refactored)
+- [[1.0.0] - 2025-07-29](#100-2025-07-29)
+  - [Added](#added)
+
+[Back to Table of Contents](README.md#table-of-contents)
+<!-- TOC end -->
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

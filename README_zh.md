@@ -1,5 +1,42 @@
 # 🤖 iFlow CLI GitHub Action
 
+<!-- TOC start -->
+## Table of Contents
+
+- [功能特性](#功能特性)
+- [使用方法](#使用方法)
+  - [基础示例](#基础示例)
+- [输入参数](#输入参数)
+- [输出参数](#输出参数)
+- [认证](#认证)
+  - [获取 iFlow API 密钥](#获取-iflow-api-密钥)
+  - [可用模型](#可用模型)
+- [自定义配置](#自定义配置)
+  - [使用附加参数](#使用附加参数)
+    - [附加参数示例](#附加参数示例)
+  - [使用预执行命令](#使用预执行命令)
+    - [多行命令](#多行命令)
+    - [带引号的参数](#带引号的参数)
+  - [使用自定义设置](#使用自定义设置)
+- [使用 MCP 服务器](#使用-mcp-服务器)
+  - [示例：使用 DeepWiki MCP 服务器](#示例使用-deepwiki-mcp-服务器)
+  - [何时使用 MCP 服务器](#何时使用-mcp-服务器)
+- [常见用例](#常见用例)
+  - [代码分析和审查](#代码分析和审查)
+  - [文档生成](#文档生成)
+  - [自动化测试建议](#自动化测试建议)
+  - [架构分析](#架构分析)
+- [故障排除](#故障排除)
+  - [常见问题](#常见问题)
+  - [调试模式](#调试模式)
+- [贡献](#贡献)
+- [许可证](#许可证)
+- [相关链接](#相关链接)
+
+[Back to Table of Contents](README.md#table-of-contents)
+<!-- TOC end -->
+
+
 一个 GitHub Action，使您能够在 GitHub 工作流中运行 [iFlow CLI](https://github.com/iflow-ai/iflow-cli) 命令。这个基于 Docker 的操作预装了 Node.js 22、npm 和 uv（超快 Python 包管理器）以实现最佳性能，并使用 iFlow CLI 执行您指定的命令。
 
 - [English Docs](README.md)
@@ -157,6 +194,8 @@ jobs:
 4. 将 API 密钥添加到您的 GitHub 仓库 secrets 中，命名为 `IFLOW_API_KEY`
 
 ### 可用模型
+
+[Models](https://platform.iflow.cn/docs/api-mode)
 
 - `Qwen3-Coder`（默认）- 适用于代码分析和生成
 - `Kimi-K2` - 适用于通用 AI 任务和更长的上下文
