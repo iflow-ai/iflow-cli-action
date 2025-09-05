@@ -35,10 +35,11 @@
 - [Related](#related)
 <!-- TOC end -->
 
-
 A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/iflow-cli) commands within your GitHub workflows. This Docker-based action comes with Node.js 22, npm, and uv (ultra-fast Python package manager) pre-installed for optimal performance, and executes your specified commands using the iFlow CLI.
 
 - [中文文档](README_zh.md)
+- [Deep Dive (中文)](docs/DeepDive.md)
+- [Deep Dive (English)](docs/DeepDive_en.md)
 
 > Docs Site (generated with iFlow CLI GitHub Action): [https://iflow-ai.github.io/iflow-cli-action/](https://iflow-ai.github.io/iflow-cli-action/)
 
