@@ -107,7 +107,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'Run iFlow CLI Issue Triage'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -212,7 +212,7 @@ The `extra_args` input allows you to pass additional command-line arguments dire
 
 ```yaml
 - name: iFlow with Custom Arguments
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Analyze this codebase with debug output"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -229,7 +229,7 @@ The `precmd` input allows you to run shell commands before executing the iFlow C
 
 ```yaml
 - name: iFlow with Pre-Execution Commands
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Analyze this codebase after installing dependencies"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -262,7 +262,7 @@ For advanced users who need complete control over the iFlow configuration, you c
 
 ```yaml
 - name: Custom iFlow Configuration
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Analyze this codebase with custom configuration"
     api_key: ${{ secrets.IFLOW_API_KEY }}  # Still required for basic validation
@@ -293,7 +293,7 @@ You can specify custom versions of GitHub CLI and iFlow CLI to use in your workf
 
 ```yaml
 - name: iFlow CLI with Custom Versions
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Analyze this codebase with specific tool versions"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -313,7 +313,7 @@ The following example demonstrates how to configure and use the DeepWiki MCP ser
 
 ```yaml
 - name: iFlow CLI with MCP Server
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "use @deepwiki to search how to use Skynet to build a game"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -357,7 +357,7 @@ MCP servers are particularly useful when you need:
 
 ```yaml
 - name: Code Review
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Review this pull request for code quality, security issues, and best practices"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -367,7 +367,7 @@ MCP servers are particularly useful when you need:
 
 ```yaml
 - name: Generate Documentation
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "/init && Generate comprehensive API documentation"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -378,7 +378,7 @@ MCP servers are particularly useful when you need:
 
 ```yaml
 - name: Test Strategy
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Analyze the codebase and suggest a comprehensive testing strategy with specific test cases"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -389,7 +389,7 @@ MCP servers are particularly useful when you need:
 
 ```yaml
 - name: Architecture Review
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "Analyze the system architecture and suggest improvements for scalability and maintainability"
     api_key: ${{ secrets.IFLOW_API_KEY }}

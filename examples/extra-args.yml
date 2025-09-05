@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Run with verbose output
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "Analyze this codebase"
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Run with multiple custom flags
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "Generate unit tests for the main functions"
           api_key: ${{ secrets.IFLOW_API_KEY }}

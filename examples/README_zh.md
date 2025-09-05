@@ -203,7 +203,7 @@ jobs:
           } >> "${GITHUB_OUTPUT}"
 
       - name: '运行 iFLOW CLI PR 审查'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_pr_review'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -463,7 +463,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 生成文档
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "/init && 为此项目生成全面的文档"
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -489,7 +489,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 使用自定义参数运行 iFlow
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "分析代码库并提供见解"
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -511,7 +511,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 安全扫描
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "分析此代码库的安全漏洞并提供改进建议"
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -535,14 +535,14 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: 项目概述
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "/init"
           api_key: ${{ secrets.IFLOW_API_KEY }}
         id: init
       
       - name: 架构分析
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "根据项目分析，提供详细的架构建议"
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -550,7 +550,7 @@ jobs:
         id: arch
       
       - name: 性能审查
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         with:
           prompt: "分析代码中的性能瓶颈和优化机会"
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -578,7 +578,7 @@ jobs:
 
 ```yaml
 - name: 使用自定义模型
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "分析此代码"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -590,7 +590,7 @@ jobs:
 
 ```yaml
 - name: 复杂分析
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "执行全面的代码分析和重构建议"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -601,7 +601,7 @@ jobs:
 
 ```yaml
 - name: 分析特定模块
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "分析此模块的改进机会"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -687,7 +687,7 @@ jobs:
             core.setOutput('implementation_request', implementation_request);
 
       - name: '运行 iFlow CLI 实现'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_implementation'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -849,7 +849,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: '运行 iFlow CLI 问题分类'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -964,7 +964,7 @@ jobs:
           echo "instructions=$INSTRUCTIONS" >> $GITHUB_OUTPUT
 
       - name: '运行 iFlow CLI 实现'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_implementation'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

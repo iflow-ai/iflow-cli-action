@@ -108,7 +108,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: '运行 iFlow CLI 问题分类'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -210,7 +210,7 @@ jobs:
 
 ```yaml
 - name: 带自定义参数的 iFlow
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "使用调试输出分析此代码库"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -227,7 +227,7 @@ jobs:
 
 ```yaml
 - name: 带预执行命令的 iFlow
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "在安装依赖项后分析此代码库"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -260,7 +260,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 自定义 iFlow 配置
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "使用自定义配置分析此代码库"
     api_key: ${{ secrets.IFLOW_API_KEY }}  # 仍需要用于基本验证
@@ -295,7 +295,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 带 MCP 服务器的 iFlow CLI
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "使用 @deepwiki 搜索如何使用 Skynet 构建游戏"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -340,7 +340,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 代码审查
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "审查此拉取请求的代码质量、安全问题和最佳实践"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -350,7 +350,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 生成文档
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "/init && 生成全面的 API 文档"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -361,7 +361,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 测试策略
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "分析代码库并建议包含具体测试用例的全面测试策略"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -372,7 +372,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 架构审查
-  uses: iflow-ai/iflow-cli-action@v1.3.0
+  uses: iflow-ai/iflow-cli-action@v1.4.0
   with:
     prompt: "分析系统架构并提出可扩展性和可维护性改进建议"
     api_key: ${{ secrets.IFLOW_API_KEY }}

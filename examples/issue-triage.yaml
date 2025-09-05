@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'Run iFlow CLI Issue Triage'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

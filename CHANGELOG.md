@@ -31,31 +31,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added {#added-1}
 
-- **Advanced GitHub Workflow Examples**: Added comprehensive examples for automated GitHub issue and PR management
-  - Issue Killer: Implements features based on GitHub issues with automated PR creation
-  - Issue Triage: Automatically labels new issues with appropriate tags
-  - PR Review: Provides automated code review for pull requests
-  - PR Review Killer: Enables direct code modifications based on PR comments
-- **Enhanced Docker Image**: Embedded uv Python package manager in Docker image for faster dependency installation
-- **Vibe Ideas Workflow**: Added new workflow for generating project ideas and suggestions
-- **Pre-execution Commands Support**: New `precmd` input parameter allows running shell commands before executing iFlow CLI
-- **Multi-line Command Support**: Enhanced `precmd` to support multiple shell commands separated by newlines
-- **Code Search Enhancement**: Added ripgrep to Dockerfile for better code search capabilities
-- **QuickStart Documentation**: Added QuickStart guide for iflow-cli-action
-- **Commit Command Configuration**: Added commit command config and examples in README [zh]
-
 ### Changed {#changed-1}
 
-- **Dockerfile Improvements**: Updated CI image configuration and Dockerfile reference
+## [1.4.0] - 2025-09-05 {#140---2025-09-05}
+
+### Added {#added-2}
+
+- **GitHub CLI and iFlow CLI Version Support**: Added support for specifying exact versions of GitHub CLI and iFlow CLI to install
+- **QuickStart Documentation**: Added QuickStart guide for iflow-cli-action with table of contents
+- **Vibe Ideas Workflow**: Added new workflow for generating project ideas and suggestions
+- **Code Search Enhancement**: Added ripgrep to Dockerfile for better code search capabilities
+
+### Changed {#changed-2}
+
+- **Dockerfile Improvements**: Optimized Dockerfile build process by removing unnecessary stages and dependencies
 - **Repository Updates**: Updated repository URLs and references
-- **Dependency Management**: Added more dependencies to Dockerfile as requested in issue #7
-- **Documentation**: Updated README files and added comprehensive documentation for new workflow examples
-- **Security**: Added id-token permission for deploy workflow
-- **Performance**: Reduced the number of image layers in the Dockerfile
+- **Docker Image**: Reduced the number of image layers in the Dockerfile for better performance
+- **Project Metadata**: Updated project metadata and CI settings
+- **Documentation**: Added table of contents to all markdown files and refined feature descriptions
+- **Security**: Added id-token permission for deploy workflow and removed unused permissions
 - **Configuration**: Extracted hard-coded bot name to configurable repo variable
 - **Node.js Installation**: Added Node.js installation to Dockerfile for npm availability
-- **Permission Management**: Removed unused id-token permission
-- **Project Metadata**: Updated project metadata and CI settings
 
 ## [1.3.0] - 2025-08-16 {#130---2025-08-16}
 

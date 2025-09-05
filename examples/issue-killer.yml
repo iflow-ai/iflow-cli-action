@@ -71,7 +71,7 @@ jobs:
             core.setOutput('implementation_request', implementation_request);
 
       - name: 'Run iFlow CLI Implementation'
-        uses: iflow-ai/iflow-cli-action@v1.3.0
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_implementation'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
