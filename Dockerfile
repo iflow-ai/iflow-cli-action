@@ -41,10 +41,18 @@ RUN apt-get update -y && apt-get -y upgrade \
     # Install Node.js (newer LTS) so npm is available for later steps
     && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get install -y nodejs \
+    # Install GitHub CLI (gh)
+    && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y gh \
     # Install Go for github-mcp-server
     && wget https://go.dev/dl/go1.23.2.linux-amd64.tar.gz \
     && tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz \
     && rm go1.23.2.linux-amd64.tar.gz \
+    # Pre-install iFlow CLI using npm package
+    && npm install -g @iflow-ai/iflow-cli@latest \
     # Install uv - ultra-fast Python package manager
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
     # Install github-mcp-server CLI tool
@@ -52,16 +60,6 @@ RUN apt-get update -y && apt-get -y upgrade \
     # Clean up apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Install GitHub CLI (gh) - will be updated to specific version if requested
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-    && apt-get update \
-    && apt-get install -y gh
-
-# Pre-install iFlow CLI using npm package - will be updated to specific version if requested
-RUN npm install -g @iflow-ai/iflow-cli
 
 # Set Go environment variables
 ENV PATH=$PATH:/usr/local/go/bin
