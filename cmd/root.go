@@ -91,8 +91,9 @@ func init() {
 }
 
 func runIFlowAction() error {
-	// Print iFlow CLI version
+	// Print iFlow CLI version and GitHub CLI version
 	printIFlowVersion()
+	printGhVersion()
 
 	// If use-env-vars is set or we detect GitHub Actions environment, use environment variables
 	if config.UseEnvVars || isGitHubActions() {
@@ -218,12 +219,12 @@ func LoadConfigFromEnv() error {
 		config.PreCmd = strings.TrimSpace(preCmd)
 		info(fmt.Sprintf("Pre-command set to: '%s'", config.PreCmd))
 	}
-	
+
 	if ghVersion := getInput("gh_version"); ghVersion != "" {
 		config.GhVersion = strings.TrimSpace(ghVersion)
 		info(fmt.Sprintf("GitHub CLI version set to: '%s'", config.GhVersion))
 	}
-	
+
 	if iflowVersion := getInput("iflow_version"); iflowVersion != "" {
 		config.IFlowVersion = strings.TrimSpace(iflowVersion)
 		info(fmt.Sprintf("iFlow CLI version set to: '%s'", config.IFlowVersion))
@@ -319,13 +320,24 @@ func printIFlowVersion() {
 	info(fmt.Sprintf("iFlow CLI version: %s", strings.TrimSpace(string(output))))
 }
 
+func printGhVersion() {
+	// Run gh --version and print the output
+	cmd := exec.Command("gh", "--version")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		info(fmt.Sprintf("Warning: Failed to get GitHub CLI version: %v", err))
+		return
+	}
+	info(fmt.Sprintf("GitHub CLI version: %s", strings.TrimSpace(string(output))))
+}
+
 // installSpecificVersions installs specific versions of GitHub CLI and iFlow CLI if requested
 func installSpecificVersions() error {
 	// Install specific GitHub CLI version if requested
 	if config.GhVersion != "" {
 		info(fmt.Sprintf("Installing GitHub CLI version %s", config.GhVersion))
 		// Download and install specific version of GitHub CLI
-		installCmd := exec.Command("sh", "-c", fmt.Sprintf("curl -fsSL https://github.com/cli/cli/releases/download/v%s/gh_%s_linux_amd64.tar.gz | tar xz && sudo cp gh_%s_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_%s_linux_amd64", config.GhVersion, config.GhVersion, config.GhVersion, config.GhVersion))
+		installCmd := exec.Command("sh", "-c", fmt.Sprintf("curl -fsSL https://github.com/cli/cli/releases/download/v%s/gh_%s_linux_amd64.tar.gz | tar xz && cp gh_%s_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_%s_linux_amd64", config.GhVersion, config.GhVersion, config.GhVersion, config.GhVersion))
 		if err := installCmd.Run(); err != nil {
 			return fmt.Errorf("failed to install GitHub CLI version %s: %w", config.GhVersion, err)
 		}
