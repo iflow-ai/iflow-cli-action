@@ -1,5 +1,3 @@
-FROM ghcr.io/iflow-ai/iflow-cli-action:main AS runtime-base
-
 # Use official Go 1.24.4 image for building
 FROM golang:1.24.4-bullseye AS builder
 
@@ -23,8 +21,9 @@ COPY cmd/ ./cmd/
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action .
 
 # Final stage - copy Go binary to Ubuntu runtime
-FROM runtime-base
+FROM ghcr.io/iflow-ai/iflow-cli-action:main
 
+USER root
 # Set working directory
 WORKDIR /github/workspace
 
@@ -39,3 +38,4 @@ USER iflow
 
 # Set entrypoint
 ENTRYPOINT ["/usr/local/bin/iflow-action"]
+
