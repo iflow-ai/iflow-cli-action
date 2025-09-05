@@ -56,4 +56,5 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/iflow-ai/iflow-cli-action:main'
+  # image: 'docker://ghcr.io/iflow-ai/iflow-cli-action:main'
+  image: 'release.Dockerfile'
