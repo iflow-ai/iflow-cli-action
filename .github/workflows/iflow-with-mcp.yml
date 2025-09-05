@@ -26,7 +26,7 @@ jobs:
       - name: iFlow CLI with MCP
         uses: ./
         with:
-          prompt: "use @deepwiki to search how to use Skynet to build a game"
+          prompt: "use deepwiki mcp server to search how to use Skynet to build a game"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           settings_json: |
             {
