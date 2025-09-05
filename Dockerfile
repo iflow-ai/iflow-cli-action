@@ -47,16 +47,6 @@ RUN apt-get update -y && apt-get -y upgrade \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
     && apt-get install -y gh \
-    # Install Go for github-mcp-server
-    && wget https://go.dev/dl/go1.23.2.linux-amd64.tar.gz \
-    && tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz \
-    && rm go1.23.2.linux-amd64.tar.gz \
-    # Pre-install iFlow CLI using npm package
-    && npm install -g @iflow-ai/iflow-cli@latest \
-    # Install uv - ultra-fast Python package manager
-    && curl -LsSf https://astral.sh/uv/install.sh | sh \
-    # Install github-mcp-server CLI tool
-    && /usr/local/go/bin/go install github.com/github/github-mcp-server/cmd/github-mcp-server@latest \
     # Clean up apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
