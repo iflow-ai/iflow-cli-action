@@ -8,7 +8,7 @@ on:
   # Allow manual trigger
   workflow_dispatch:
   # Also run on pushes to main branch
-  # push:
+  push:
   #   branches: [ main ]
 
 permissions:
@@ -45,3 +45,5 @@ jobs:
           model: "Qwen3-Coder"
           timeout: "3600"
           extra_args: "--debug"
+          iflow_version: "0.2.11"
+          gh_version: "2.76.2"

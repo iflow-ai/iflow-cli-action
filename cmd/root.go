@@ -27,6 +27,8 @@ type Config struct {
 	Timeout      int
 	ExtraArgs    string // Additional command line arguments for iFlow CLI
 	PreCmd       string // Shell command(s) to execute before running iFlow CLI
+	GhVersion    string // Version of GitHub CLI to install
+	IFlowVersion string // Version of iFlow CLI to install
 	UseEnvVars   bool   // Flag to indicate whether to use environment variables (GitHub Actions mode)
 	IsTimeout    bool   // Flag to indicate if execution timed out
 }
@@ -81,14 +83,17 @@ func init() {
 	rootCmd.Flags().IntVar(&config.Timeout, "timeout", 3600, "Timeout in seconds (1-86400)")
 	rootCmd.Flags().StringVar(&config.ExtraArgs, "extra-args", "", "Additional command line arguments to pass to iFlow CLI")
 	rootCmd.Flags().StringVar(&config.PreCmd, "precmd", "", "Shell command(s) to execute before running iFlow CLI")
+	rootCmd.Flags().StringVar(&config.GhVersion, "gh-version", "", "Version of GitHub CLI to install")
+	rootCmd.Flags().StringVar(&config.IFlowVersion, "iflow-version", "", "Version of iFlow CLI to install")
 	rootCmd.Flags().BoolVar(&config.UseEnvVars, "use-env-vars", false, "Use environment variables for configuration (GitHub Actions mode)")
 
 	// Mark required flags only if not in GitHub Actions mode - this will be validated later
 }
 
 func runIFlowAction() error {
-	// Print iFlow CLI version
+	// Print iFlow CLI version and GitHub CLI version
 	printIFlowVersion()
+	printGhVersion()
 
 	// If use-env-vars is set or we detect GitHub Actions environment, use environment variables
 	if config.UseEnvVars || isGitHubActions() {
@@ -100,6 +105,11 @@ func runIFlowAction() error {
 	// Validate configuration
 	if err := validateConfig(); err != nil {
 		return err
+	}
+
+	// Install specific versions if requested
+	if err := installSpecificVersions(); err != nil {
+		return fmt.Errorf("failed to install specific versions: %w", err)
 	}
 
 	// Setup working directory
@@ -210,6 +220,16 @@ func LoadConfigFromEnv() error {
 		info(fmt.Sprintf("Pre-command set to: '%s'", config.PreCmd))
 	}
 
+	if ghVersion := getInput("gh_version"); ghVersion != "" {
+		config.GhVersion = strings.TrimSpace(ghVersion)
+		info(fmt.Sprintf("GitHub CLI version set to: '%s'", config.GhVersion))
+	}
+
+	if iflowVersion := getInput("iflow_version"); iflowVersion != "" {
+		config.IFlowVersion = strings.TrimSpace(iflowVersion)
+		info(fmt.Sprintf("iFlow CLI version set to: '%s'", config.IFlowVersion))
+	}
+
 	return nil
 }
 
@@ -298,6 +318,44 @@ func printIFlowVersion() {
 		return
 	}
 	info(fmt.Sprintf("iFlow CLI version: %s", strings.TrimSpace(string(output))))
+}
+
+func printGhVersion() {
+	// Run gh --version and print the output
+	cmd := exec.Command("gh", "--version")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		info(fmt.Sprintf("Warning: Failed to get GitHub CLI version: %v", err))
+		return
+	}
+	info(fmt.Sprintf("GitHub CLI version: %s", strings.TrimSpace(string(output))))
+}
+
+// installSpecificVersions installs specific versions of GitHub CLI and iFlow CLI if requested
+func installSpecificVersions() error {
+	// Install specific GitHub CLI version if requested
+	if config.GhVersion != "" {
+		info(fmt.Sprintf("Installing GitHub CLI version %s", config.GhVersion))
+		// Download and install specific version of GitHub CLI
+		installCmd := exec.Command("sh", "-c", fmt.Sprintf("curl -fsSL https://github.com/cli/cli/releases/download/v%s/gh_%s_linux_amd64.tar.gz | tar xz && cp gh_%s_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_%s_linux_amd64", config.GhVersion, config.GhVersion, config.GhVersion, config.GhVersion))
+		if err := installCmd.Run(); err != nil {
+			return fmt.Errorf("failed to install GitHub CLI version %s: %w", config.GhVersion, err)
+		}
+		info(fmt.Sprintf("Successfully installed GitHub CLI version %s", config.GhVersion))
+	}
+
+	// Install specific iFlow CLI version if requested
+	if config.IFlowVersion != "" {
+		info(fmt.Sprintf("Installing iFlow CLI version %s", config.IFlowVersion))
+		// Install specific version of iFlow CLI using npm
+		installCmd := exec.Command("npm", "install", "-g", fmt.Sprintf("@iflow-ai/iflow-cli@%s", config.IFlowVersion))
+		if err := installCmd.Run(); err != nil {
+			return fmt.Errorf("failed to install iFlow CLI version %s: %w", config.IFlowVersion, err)
+		}
+		info(fmt.Sprintf("Successfully installed iFlow CLI version %s", config.IFlowVersion))
+	}
+
+	return nil
 }
 
 func configureIFlow() error {

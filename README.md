@@ -175,6 +175,8 @@ jobs:
 | `timeout` | Timeout for iFlow CLI execution in seconds (1-86400) | ❌ No | `86400` |
 | `extra_args` | Additional command line arguments to pass to iFlow CLI (space-separated string) | ❌ No | `` |
 | `precmd` | Shell command(s) to execute before running iFlow CLI (e.g., "npm install", "git fetch") | ❌ No | `` |
+| `gh_version` | Version of GitHub CLI to install (e.g., "2.76.2"). If not specified, uses the pre-installed version. | ❌ No | `` |
+| `iflow_version` | Version of iFlow CLI to install (e.g., "0.2.4"). If not specified, uses the pre-installed version. | ❌ No | `` |
 
 ## Outputs
 
@@ -284,7 +286,23 @@ When `settings_json` is provided, it takes precedence over individual configurat
 
 **Note:** The `api_key` input is still required for validation, but the actual API key used will be the one specified in your `settings_json`.
 
-## Using MCP Servers
+### Using Custom Tool Versions
+
+You can specify custom versions of GitHub CLI and iFlow CLI to use in your workflow:
+
+```yaml
+- name: iFlow CLI with Custom Versions
+  uses: iflow-ai/iflow-cli-action@v1.3.0
+  with:
+    prompt: "Analyze this codebase with specific tool versions"
+    api_key: ${{ secrets.IFLOW_API_KEY }}
+    gh_version: "2.76.2"
+    iflow_version: "0.2.4"
+```
+
+This is useful when you need to ensure compatibility with specific versions of these tools or when you want to use features available only in certain versions.
+
+### Using MCP Servers
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io) allows iFlow CLI to connect to external tools and services, extending its capabilities beyond just AI model interactions. You can configure MCP servers in your workflow to enable features like code search, database querying, or custom tool integrations.
 

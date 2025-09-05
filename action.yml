@@ -39,6 +39,14 @@ inputs:
     description: 'Shell command(s) to execute before running iFlow CLI (e.g., "npm install", "git fetch")'
     required: false
     default: ''
+  gh_version:
+    description: 'Version of GitHub CLI to install (e.g., "2.76.2"). If not specified, uses the pre-installed version.'
+    required: false
+    default: ''
+  iflow_version:
+    description: 'Version of iFlow CLI to install (e.g., "0.2.4"). If not specified, uses the pre-installed version.'
+    required: false
+    default: ''
 
 outputs:
   result:
@@ -48,4 +56,5 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/iflow-ai/iflow-cli-action:main'
+  # image: 'docker://ghcr.io/iflow-ai/iflow-cli-action:main'
+  image: 'release.Dockerfile'
