@@ -15,16 +15,11 @@ COPY main.go ./
 COPY cmd/ ./cmd/
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action . \
+    && cp iflow-action /usr/local/bin/iflow-action \
+    && chmod +x /usr/local/bin/iflow-action
 
 # Set working directory
 WORKDIR /github/workspace
-
-# Copy the binary
-COPY /app/iflow-action /usr/local/bin/iflow-action
-
-# Make sure binary is executable
-RUN chmod +x /usr/local/bin/iflow-action
-
 # Set entrypoint
 ENTRYPOINT ["/usr/local/bin/iflow-action"]
