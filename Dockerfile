@@ -47,6 +47,16 @@ RUN apt-get update -y && apt-get -y upgrade \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
     && apt-get install -y gh \
+    # Install Go for github-mcp-server
+    && wget https://go.dev/dl/go1.24.7.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.24.7.linux-amd64.tar.gz \
+    && rm go1.24.7.linux-amd64.tar.gz \
+    # Pre-install iFlow CLI using npm package
+    && npm install -g @iflow-ai/iflow-cli \
+    # Install uv - ultra-fast Python package manager
+    && curl -LsSf https://astral.sh/uv/install.sh | sh \
+    # Install github-mcp-server CLI tool
+    && /usr/local/go/bin/go install github.com/github/github-mcp-server/cmd/github-mcp-server@latest \
     # Clean up apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -57,22 +67,47 @@ ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 ENV PATH=$PATH:$GOPATH/bin
 
-# Create a non-root user with proper home directory
-RUN groupadd -g 1001 iflow && \
-    useradd -r -u 1001 -g iflow -m -d /home/iflow iflow
+# Use official Go 1.24.4 image for building
+FROM golang:1.24.4-bullseye AS builder
 
-# Create .iflow directory for the non-root user and set permissions
-RUN mkdir -p /home/iflow/.iflow && \
-    chown -R iflow:iflow /home/iflow/.iflow
+# Install build dependencies
+RUN apt-get update && apt-get install -y git ca-certificates curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create npm global directory for the non-root user and set permissions
-RUN mkdir -p /home/iflow/.npm-global && \
-    chown -R iflow:iflow /home/iflow/.npm-global
+# Set working directory
+WORKDIR /app
 
-# Ensure Go is in PATH for the runtime user
+# Copy go mod files first for better layer caching
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY main.go ./
+COPY cmd/ ./cmd/
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action .
+
+# Final stage - copy Go binary to Ubuntu runtime
+FROM runtime-base
+
+# Set working directory
+WORKDIR /github/workspace
+
+# Copy the binary from builder stage
+COPY --from=builder /app/iflow-action /usr/local/bin/iflow-action
+
+# Make sure binary is executable
+RUN chmod +x /usr/local/bin/iflow-action
+
+# Create .iflow directory
+RUN mkdir -p /root/.iflow
+
+# Ensure Go is in PATH
 ENV PATH="/usr/local/go/bin:$PATH"
 
-# Set npm global prefix for the runtime user
-ENV npm_config_prefix=/home/iflow/.npm-global
-ENV PATH="/home/iflow/.npm-global/bin:$PATH"
-
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/iflow-action"]
