@@ -25,10 +25,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action .
 # Final stage - copy Go binary to Ubuntu runtime
 FROM runtime-base
 
-# Create a non-root user with proper home directory
-RUN groupadd -g 1001 iflow && \
-    useradd -r -u 1001 -g iflow -m -d /home/iflow iflow
-
 # Set working directory
 WORKDIR /github/workspace
 
@@ -37,13 +33,6 @@ COPY --from=builder /app/iflow-action /usr/local/bin/iflow-action
 
 # Make sure binary is executable
 RUN chmod +x /usr/local/bin/iflow-action
-
-# Create .iflow directory for the non-root user and set permissions
-RUN mkdir -p /home/iflow/.iflow && \
-    chown -R iflow:iflow /home/iflow/.iflow
-
-# Ensure Go is in PATH for the runtime user
-ENV PATH="/usr/local/go/bin:$PATH"
 
 # Switch to non-root user
 USER iflow

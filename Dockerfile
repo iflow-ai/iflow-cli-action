@@ -67,3 +67,14 @@ ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 ENV PATH=$PATH:$GOPATH/bin
 
+# Create a non-root user with proper home directory
+RUN groupadd -g 1001 iflow && \
+    useradd -r -u 1001 -g iflow -m -d /home/iflow iflow
+
+# Create .iflow directory for the non-root user and set permissions
+RUN mkdir -p /home/iflow/.iflow && \
+    chown -R iflow:iflow /home/iflow/.iflow
+
+# Ensure Go is in PATH for the runtime user
+ENV PATH="/usr/local/go/bin:$PATH"
+
