@@ -48,9 +48,9 @@ RUN apt-get update -y && apt-get -y upgrade \
     && apt-get update \
     && apt-get install -y gh \
     # Install Go for github-mcp-server
-    && wget https://go.dev/dl/go1.23.2.linux-amd64.tar.gz \
-    && tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz \
-    && rm go1.23.2.linux-amd64.tar.gz \
+    && wget https://go.dev/dl/go1.24.7.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.24.7.linux-amd64.tar.gz \
+    && rm go1.24.7.linux-amd64.tar.gz \
     # Pre-install iFlow CLI using npm package
     && npm install -g @iflow-ai/iflow-cli \
     # Install uv - ultra-fast Python package manager
@@ -71,7 +71,9 @@ ENV PATH=$PATH:$GOPATH/bin
 FROM golang:1.24.4-bullseye AS builder
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y git ca-certificates curl
+RUN apt-get update && apt-get install -y git ca-certificates curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
