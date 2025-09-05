@@ -25,6 +25,7 @@
   - [代码分析和审查](#代码分析和审查)
   - [文档生成](#文档生成)
   - [自动化测试建议](#自动化测试建议)
+  - [问题管理](#问题管理)
   - [架构分析](#架构分析)
 - [故障排除](#故障排除)
   - [常见问题](#常见问题)
@@ -336,48 +337,33 @@ extra_args: '--debug'
 
 ## 常见用例
 
+有关这些用例的详细示例，请参阅 [examples](examples) 目录中的工作流文件。
+
 ### 代码分析和审查
 
-```yaml
-- name: 代码审查
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "审查此拉取请求的代码质量、安全问题和最佳实践"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-```
+代码审查工作流，请参见：
+- [拉取请求代码审查](examples/code-review.yml) - 在 PR 打开/重新打开或通过评论触发时自动审查 PR
+- [PR Review Killer](examples/pr-review-killer.yml) - 根据评论对 PR 实施更改
 
 ### 文档生成
 
-```yaml
-- name: 生成文档
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "/init && 生成全面的 API 文档"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    timeout: "600"
-```
+文档生成工作流，请参见：
+- [文档生成](examples/documentation.yml) - 自动从代码库生成技术文档
 
 ### 自动化测试建议
 
-```yaml
-- name: 测试策略
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "分析代码库并建议包含具体测试用例的全面测试策略"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    model: "DeepSeek-V3"
-```
+自动化测试建议可以类似代码审查模式实施。请参阅 [代码审查示例](examples/code-review.yml) 了解可通过修改提示适应测试建议的模板。
+
+### 问题管理
+
+问题管理工作流，请参见：
+- [Issue Killer](examples/issue-killer.yml) - 基于 GitHub 问题自动实现功能
+- [问题分类](examples/issue-triage.yaml) - 自动为新的 GitHub 问题添加标签
+- [Issue Killer](examples/issue-killer.yml) - 基于 GitHub 问题实现功能
 
 ### 架构分析
 
-```yaml
-- name: 架构审查
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "分析系统架构并提出可扩展性和可维护性改进建议"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    timeout: "900"
-```
+可以使用带有自定义提示的 iFlow CLI Action 执行架构分析。请参阅 [文档示例](examples/documentation.yml) 了解可通过修改提示适应架构分析的模板。
 
 ## 故障排除
 

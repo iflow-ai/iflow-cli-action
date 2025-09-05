@@ -26,6 +26,7 @@
   - [Code Analysis and Review](#code-analysis-and-review)
   - [Documentation Generation](#documentation-generation)
   - [Automated Testing Suggestions](#automated-testing-suggestions)
+  - [Issue Management](#issue-management)
   - [Architecture Analysis](#architecture-analysis)
 - [Troubleshooting](#troubleshooting)
   - [Common Issues](#common-issues)
@@ -354,48 +355,33 @@ MCP servers are particularly useful when you need:
 
 ## Common Use Cases
 
+For detailed examples of these use cases, please refer to the workflow files in the [examples](examples) directory.
+
 ### Code Analysis and Review
 
-```yaml
-- name: Code Review
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "Review this pull request for code quality, security issues, and best practices"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-```
+For code review workflows, see:
+- [Code Review on Pull Requests](examples/code-review.yml) - Automatically reviews PRs when opened/reopened or when triggered by comment
+- [PR Review Killer](examples/pr-review-killer.yml) - Implements changes to PRs based on comments
 
 ### Documentation Generation
 
-```yaml
-- name: Generate Documentation
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "/init && Generate comprehensive API documentation"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    timeout: "600"
-```
+For documentation generation workflows, see:
+- [Documentation Generation](examples/documentation.yml) - Automatically generates technical documentation from codebase
 
 ### Automated Testing Suggestions
 
-```yaml
-- name: Test Strategy
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "Analyze the codebase and suggest a comprehensive testing strategy with specific test cases"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    model: "DeepSeek-V3"
-```
+Automated testing suggestions can be implemented similar to the code review pattern. See the [code review example](examples/code-review.yml) for a template that can be adapted for testing suggestions by modifying the prompt.
+
+### Issue Management
+
+For issue management workflows, see:
+- [Issue Killer](examples/issue-killer.yml) - Automatically implements features based on GitHub issues
+- [Issue Triage](examples/issue-triage.yaml) - Automatically labels new GitHub issues
+- [Issue Killer](examples/issue-killer.yml) - Implements features based on GitHub issues
 
 ### Architecture Analysis
 
-```yaml
-- name: Architecture Review
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "Analyze the system architecture and suggest improvements for scalability and maintainability"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    timeout: "900"
-```
+Architecture analysis can be performed using the iFlow CLI Action with custom prompts. See the [documentation example](examples/documentation.yml) for a template that can be adapted for architecture analysis by modifying the prompt.
 
 ## Troubleshooting
 
