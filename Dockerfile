@@ -75,6 +75,14 @@ RUN groupadd -g 1001 iflow && \
 RUN mkdir -p /home/iflow/.iflow && \
     chown -R iflow:iflow /home/iflow/.iflow
 
+# Create npm global directory for the non-root user and set permissions
+RUN mkdir -p /home/iflow/.npm-global && \
+    chown -R iflow:iflow /home/iflow/.npm-global
+
 # Ensure Go is in PATH for the runtime user
 ENV PATH="/usr/local/go/bin:$PATH"
+
+# Set npm global prefix for the runtime user
+ENV npm_config_prefix=/home/iflow/.npm-global
+ENV PATH="/home/iflow/.npm-global/bin:$PATH"
 
