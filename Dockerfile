@@ -1,5 +1,5 @@
 # Use Ubuntu 22.04 as base image
-FROM ubuntu:22.04 AS runtime-base
+FROM ubuntu:22.04
 
 # Set noninteractive installation mode to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -7,34 +7,34 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install runtime dependencies including Node.js, GitHub CLI, Go, and other tools
 RUN apt-get update -y && apt-get -y upgrade \
     && apt-get install -y \
-        wget \
-        bash \
-        curl \
-        git \
-        procps \
-        ca-certificates \
-        software-properties-common \
-        build-essential \
-        libssl-dev \
-        pkg-config \
-        libtool \
-        autoconf \
-        libreadline-dev \
-        cmake \
-        libev-dev \
-        python3 \
-        unzip \
-        lsb-core \
-        iproute2 \
-        iputils-ping \
-        netcat-traditional \
-        apt-transport-https \
-        gnupg \
-        lsb-release \
-        file \
-        vim \
-        zlib1g-dev \
-        ripgrep \
+    wget \
+    bash \
+    curl \
+    git \
+    procps \
+    ca-certificates \
+    software-properties-common \
+    build-essential \
+    libssl-dev \
+    pkg-config \
+    libtool \
+    autoconf \
+    libreadline-dev \
+    cmake \
+    libev-dev \
+    python3 \
+    unzip \
+    lsb-core \
+    iproute2 \
+    iputils-ping \
+    netcat-traditional \
+    apt-transport-https \
+    gnupg \
+    lsb-release \
+    file \
+    vim \
+    zlib1g-dev \
+    ripgrep \
     && add-apt-repository ppa:xmake-io/xmake \
     && apt-get update -y \
     && apt install xmake linux-tools-generic google-perftools libgoogle-perftools-dev -y \
@@ -59,55 +59,14 @@ RUN apt-get update -y && apt-get -y upgrade \
     && /usr/local/go/bin/go install github.com/github/github-mcp-server/cmd/github-mcp-server@latest \
     # Clean up apt cache
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    # Create .iflow directory
+    && mkdir -p /root/.iflow
 
 # Set Go environment variables
 ENV PATH=$PATH:/usr/local/go/bin
 ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 ENV PATH=$PATH:$GOPATH/bin
-
-# Use official Go 1.24.4 image for building
-FROM golang:1.24.4-bullseye AS builder
-
-# Install build dependencies
-RUN apt-get update && apt-get install -y git ca-certificates curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set working directory
-WORKDIR /app
-
-# Copy go mod files first for better layer caching
-COPY go.mod go.sum ./
-
-# Download dependencies
-RUN go mod download
-
-# Copy source code
-COPY main.go ./
-COPY cmd/ ./cmd/
-
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action .
-
-# Final stage - copy Go binary to Ubuntu runtime
-FROM runtime-base
-
-# Set working directory
-WORKDIR /github/workspace
-
-# Copy the binary from builder stage
-COPY --from=builder /app/iflow-action /usr/local/bin/iflow-action
-
-# Make sure binary is executable
-RUN chmod +x /usr/local/bin/iflow-action
-
-# Create .iflow directory
-RUN mkdir -p /root/.iflow
-
 # Ensure Go is in PATH
 ENV PATH="/usr/local/go/bin:$PATH"
-
-# Set entrypoint
-ENTRYPOINT ["/usr/local/bin/iflow-action"]
