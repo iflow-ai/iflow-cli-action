@@ -6,16 +6,14 @@ WORKDIR /app
 
 # Copy go mod files first for better layer caching
 COPY go.mod go.sum ./
-
-# Download dependencies
-RUN go mod download
-
 # Copy source code
 COPY main.go ./
 COPY cmd/ ./cmd/
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action . \
+RUN go install github.com/github/github-mcp-server/cmd/github-mcp-server@latest \
+    && go mod download \
+    && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iflow-action . \
     && cp iflow-action /usr/local/bin/iflow-action \
     && chmod +x /usr/local/bin/iflow-action
 
