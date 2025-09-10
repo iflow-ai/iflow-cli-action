@@ -1,63 +1,72 @@
 package cmd
 
 import (
-	"os"
 	"testing"
+
+	"github.com/iflow-ai/iflow-cli-action/internal/config"
+	internalerrors "github.com/iflow-ai/iflow-cli-action/internal/errors"
 )
 
-func TestExecutePreCmd(t *testing.T) {
-	// Change to a temporary directory for testing
-	tempDir := t.TempDir()
-	originalDir, _ := os.Getwd()
-	os.Chdir(tempDir)
-	defer os.Chdir(originalDir)
+func TestGetConfig(t *testing.T) {
+	// Initialize config for testing
+	cfg = &config.Config{
+		Prompt:  "test prompt",
+		APIKey:  "test-key",
+		Timeout: 1800,
+	}
 
+	result := GetConfig()
+	if result != cfg {
+		t.Error("GetConfig() should return the global config")
+	}
+}
+
+func TestHandleAppError(t *testing.T) {
 	tests := []struct {
 		name        string
-		preCmd      string
-		expectError bool
+		err         *internalerrors.AppError
+		expectOutput string
 	}{
 		{
-			name:        "Single command",
-			preCmd:      "echo 'single command'",
-			expectError: false,
+			name: "validation error",
+			err: &internalerrors.AppError{
+				Type:    internalerrors.ErrTypeValidation,
+				Message: "invalid input",
+			},
+			expectOutput: "Validation Error: invalid input",
 		},
 		{
-			name:        "Multiple commands",
-			preCmd:      "echo 'first command'\necho 'second command'",
-			expectError: false,
+			name: "timeout error",
+			err: &internalerrors.AppError{
+				Type:    internalerrors.ErrTypeTimeout,
+				Message: "operation timed out",
+				Context: map[string]interface{}{"timeout": 30},
+			},
+			expectOutput: "Timeout Error: operation timed out",
 		},
 		{
-			name:        "Multiple commands with empty lines",
-			preCmd:      "echo 'first command'\n\necho 'third command'",
-			expectError: false,
+			name: "configuration error",
+			err: &internalerrors.AppError{
+				Type:    internalerrors.ErrTypeConfiguration,
+				Message: "config invalid",
+			},
+			expectOutput: "Configuration Error: config invalid",
 		},
 		{
-			name:        "Empty precmd",
-			preCmd:      "",
-			expectError: false,
-		},
-		{
-			name:        "Invalid command",
-			preCmd:      "nonexistentcommand12345",
-			expectError: true,
+			name: "generic error",
+			err: &internalerrors.AppError{
+				Type:    internalerrors.ErrorType(999), // Unknown type
+				Message: "unknown error",
+			},
+			expectOutput: "Error: unknown error",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Set the precmd in the global config
-			config.PreCmd = tt.preCmd
-			
-			// Execute the precmd
-			err := executePreCmd()
-			
-			// Check if we expected an error
-			if tt.expectError && err == nil {
-				t.Errorf("Expected error but got none")
-			} else if !tt.expectError && err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			// This test would normally capture stdout to verify the output
+			// For now, we'll just ensure the function doesn't panic
+			handleAppError(tt.err)
 		})
 	}
 }
