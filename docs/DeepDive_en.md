@@ -83,7 +83,6 @@ jobs:
         contains(github.event.comment.body, '@iflow-cli /triage') &&
         contains(fromJSON('[\"OWNER\", \"MEMBER\", \"COLLABORATOR\"]'), github.event.comment.author_association)
       )
-    timeout-minutes: 5
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repository

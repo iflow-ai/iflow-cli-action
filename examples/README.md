@@ -129,7 +129,6 @@ jobs:
           contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.review.author_association)
         )
       )
-    timeout-minutes: 5
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout PR code'
@@ -698,7 +697,6 @@ jobs:
         contains(github.event.comment.body, '@iflow-cli /issue-killer') &&
         contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
       )
-    timeout-minutes: 30
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repository
@@ -896,7 +894,6 @@ jobs:
         contains(github.event.comment.body, '@iflow-cli /triage') &&
         contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
       )
-    timeout-minutes: 5
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repository
@@ -995,7 +992,6 @@ jobs:
         contains(github.event.comment.body, '@IFlow-CLI /review-killer')
       ) &&
       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
-    timeout-minutes: 30
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repository
