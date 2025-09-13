@@ -22,7 +22,7 @@ COPY internal/ ./internal/
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -ldflags='-w -s -extldflags "-static"' \
-    -a -installsuffix cgo \
+    -a \
     -o iflow-action .
 
 # Install the binary and set permissions
