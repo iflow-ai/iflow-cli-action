@@ -1,0 +1,4 @@
+{
+  "files": ["CHANGELOG.md"],
+  "patterns": [".git/*", "node_modules/*", "*.min.md", ".iflow/*"]
+}

@@ -34,6 +34,12 @@
 - [Contributing](#contributing)
 - [License](#license)
 - [Related](#related)
+- [Documentation Tools](#documentation-tools)
+  - [Table of Contents Generator](#table-of-contents-generator)
+    - [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Default Ignores](#default-ignores)
+    - [Integration with GitHub Actions](#integration-with-github-actions)
 <!-- TOC end -->
 
 A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/iflow-cli) commands within your GitHub workflows. This Docker-based action comes with Node.js 22, npm, and uv (ultra-fast Python package manager) pre-installed for optimal performance, and executes your specified commands using the iFlow CLI.
@@ -419,3 +425,57 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [iFlow Platform](https://docs.iflow.cn/en/docs) - Official documentation
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli)
+
+## Documentation Tools
+
+This repository includes a Python script `generate_toc.py` to automatically generate and update table of contents for all markdown files.
+
+### Table of Contents Generator
+
+The `generate_toc.py` script can automatically generate and update table of contents for all markdown files in the repository.
+
+#### Usage
+
+```bash
+# Generate TOC for all markdown files
+python3 generate_toc.py
+
+# Ignore specific files via command line
+python3 generate_toc.py --ignore-files README.md CHANGELOG.md
+
+# Ignore patterns via command line
+python3 generate_toc.py --ignore-patterns "docs/temp/*" "*.draft.md"
+
+# Use custom config file
+python3 generate_toc.py --config .mytocignore
+```
+
+#### Configuration
+
+Create a `.tocignore` file in your repository root to configure which files to ignore:
+
+```json
+{
+  "files": ["CHANGELOG.md", "README_zh.md"],
+  "patterns": [".git/*", "node_modules/*", "*.min.md", "docs/temp/*", "examples/drafts/*"]
+}
+```
+
+- **files**: Exact filenames to ignore
+- **patterns**: Glob patterns to match files/directories to ignore
+
+#### Default Ignores
+
+By default, the script ignores:
+- `.git/` directory
+- `node_modules/` directory
+- `*.min.md` files
+
+#### Integration with GitHub Actions
+
+You can add the TOC generation to your CI/CD pipeline:
+
+```yaml
+- name: Generate Table of Contents
+  run: python3 generate_toc.py
+```
