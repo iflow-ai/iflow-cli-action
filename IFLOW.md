@@ -25,6 +25,7 @@
   - [Pre-execution Commands (`precmd`)](#pre-execution-commands-precmd)
   - [Extra Arguments (`extra_args`)](#extra-arguments-extra_args)
   - [Custom Settings JSON](#custom-settings-json)
+  - [Version Management](#version-management)
 - [Common Development Tasks](#common-development-tasks)
   - [Adding New Configuration Options](#adding-new-configuration-options)
   - [Modifying iFlow Execution](#modifying-iflow-execution)
@@ -68,6 +69,7 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 - **Flexible Configuration**: Support for both CLI flags and GitHub Actions environment variables
 - **Rich Reporting**: Generate detailed execution summaries with GitHub Actions integration
 - **Multi-language Support**: Pre-configured environment for Go, Python, Node.js, and more
+- **Version Management**: Configurable versions for GitHub CLI and iFlow CLI
 
 ## Architecture
 
@@ -80,7 +82,7 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 2. **Docker Infrastructure**:
    - **Multi-stage build**: Optimized for size and performance
    - **Ubuntu 22.04 base**: Production-ready with security updates
-   - **Pre-installed tools**: Node.js 24, npm, uv, GitHub CLI, Go 1.23.2, xmake
+   - **Pre-installed tools**: Node.js 24, npm, uv, GitHub CLI, Go 1.24.7, xmake
    - **Non-root user**: Runs as `iflow` user for security
 
 3. **GitHub Actions Integration**:
@@ -97,6 +99,7 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 - **Extra arguments** support for iFlow CLI customization
 - **Real-time output streaming** during execution
 - **Comprehensive error handling** with actionable troubleshooting guidance
+- **Version management** for GitHub CLI and iFlow CLI
 
 ## Development Commands
 
@@ -111,6 +114,9 @@ docker build -t iflow-cli-action .
 
 # Build with specific Go version
 go build -ldflags="-s -w" -o iflow-action .
+
+# Build with release optimizations
+go build -trimpath -ldflags="-s -w -X main.version=$(git describe --tags --always)" -o iflow-action .
 ```
 
 ### Testing
@@ -124,6 +130,12 @@ go test -v ./...
 
 # Run specific test
 go test -v ./cmd/...
+
+# Run tests with coverage
+go test -cover ./...
+
+# Run tests with race detection
+go test -race ./...
 ```
 
 ### Running
@@ -142,6 +154,9 @@ go test -v ./cmd/...
 
 # With extra arguments
 ./iflow-action --prompt "Analyze code" --api-key YOUR_API_KEY --extra-args "--verbose --format json"
+
+# With specific versions
+./iflow-action --prompt "Test" --api-key YOUR_API_KEY --gh-version "2.76.2" --iflow-version "0.2.4"
 ```
 
 #### GitHub Actions Mode
@@ -155,6 +170,9 @@ INPUT_PROMPT="Run tests" INPUT_API_KEY=your-key INPUT_PRECMD="npm ci" ./iflow-ac
 
 # With custom settings JSON
 INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"your-key"}' ./iflow-action --use-env-vars=true
+
+# With version specifications
+INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW_VERSION="0.2.4" ./iflow-action --use-env-vars=true
 ```
 
 ## Code Structure
@@ -165,6 +183,7 @@ INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"you
 - **Validation**: Comprehensive input validation with helpful error messages
 - **Settings JSON**: Support for complete custom configuration via JSON
 - **Environment detection**: Automatic GitHub Actions environment detection
+- **Version management**: Configurable tool versions for flexible deployments
 
 ### iFlow CLI Integration
 
@@ -172,6 +191,7 @@ INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"you
 - **Settings configuration**: Automatic `~/.iflow/settings.json` generation
 - **Command execution**: Non-interactive mode with `--yolo` and `--prompt` flags
 - **Output handling**: Real-time streaming with buffer capture
+- **Version control**: Support for specific iFlow CLI versions
 
 ### GitHub Actions Features
 
@@ -179,6 +199,7 @@ INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"you
 - **Step summaries**: Rich Markdown summaries with emoji indicators
 - **Error annotations**: GitHub Actions compatible error and notice messages
 - **Timeout handling**: Graceful timeout detection with troubleshooting hints
+- **Concurrent execution**: Safe concurrent workflow execution
 
 ## Configuration
 
@@ -195,6 +216,8 @@ INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"you
 | `timeout` | int | `3600` | Timeout in seconds (1-86400) |
 | `extra_args` | string | - | Additional CLI arguments for iFlow |
 | `precmd` | string | - | Shell commands to run before iFlow |
+| `gh_version` | string | - | Version of GitHub CLI to install (e.g., "2.76.2") |
+| `iflow_version` | string | - | Version of iFlow CLI to install (e.g., "0.2.4") |
 
 ### Output Variables
 
@@ -248,27 +271,40 @@ Provide complete configuration via JSON:
       }
 ```
 
+### Version Management
+
+Specify exact versions for GitHub CLI and iFlow CLI:
+
+```yaml
+- uses: iflow-ai/iflow-cli-action@main
+  with:
+    prompt: "Analyze code"
+    api_key: ${{ secrets.IFLOW_API_KEY }}
+    gh_version: "2.76.2"
+    iflow_version: "0.2.4"
+```
+
 ## Common Development Tasks
 
 ### Adding New Configuration Options
 
 1. **Add CLI flag** in `cmd/root.go` init function
-2. **Update Config struct** with new field
-3. **Add environment variable support** in `loadConfigFromEnv`
+2. **Update Config struct** with new field in `internal/config/config.go`
+3. **Add environment variable support** in `LoadFromEnv` method
 4. **Update action.yml** with new input definition
-5. **Add validation logic** in `validateConfig`
+5. **Add validation logic** in `Validate` method
 6. **Update documentation** in README files
 
 ### Modifying iFlow Execution
 
-1. **Update `executeIFlow`** function for command changes
+1. **Update `executeIFlow`** function in `internal/iflow/client.go` for command changes
 2. **Modify argument parsing** in `parseExtraArgs` if needed
-3. **Update output handling** in `executeIFlow`
+3. **Update output handling** in execution functions
 4. **Test with various scenarios** (success, timeout, error)
 
 ### Enhancing GitHub Summary Output
 
-1. **Update `generateSummaryMarkdown`** function
+1. **Update `generateSummaryMarkdown`** function in `internal/github/actions.go`
 2. **Add new sections** for metrics or troubleshooting
 3. **Improve formatting** with better Markdown structure
 4. **Add emoji indicators** for better visual feedback
@@ -289,7 +325,7 @@ Provide complete configuration via JSON:
 
 ```bash
 # Build and test
-make build
+go build -o iflow-action
 ./iflow-action --prompt "Test prompt" --api-key test-key --use-env-vars=false
 
 # Test with timeout
@@ -297,6 +333,9 @@ make build
 
 # Test pre-execution commands
 ./iflow-action --prompt "Test" --api-key test-key --precmd "echo 'Setup complete'"
+
+# Test version specifications
+./iflow-action --prompt "Test" --api-key test-key --gh-version "2.76.2" --iflow-version "0.2.4"
 ```
 
 #### Docker Testing
@@ -316,6 +355,9 @@ docker run -e INPUT_PROMPT="Test" -e INPUT_API_KEY=test-key -e INPUT_TIMEOUT=5 i
 
 # Test pre-execution commands
 docker run -e INPUT_PROMPT="Test" -e INPUT_API_KEY=test-key -e INPUT_PRECMD="ls -la && pwd" iflow-cli-action:test
+
+# Test version specifications
+docker run -e INPUT_PROMPT="Test" -e INPUT_API_KEY=test-key -e INPUT_GH_VERSION="2.76.2" -e INPUT_IFLOW_VERSION="0.2.4" iflow-cli-action:test
 ```
 
 ### GitHub Actions Testing
@@ -339,6 +381,8 @@ jobs:
           precmd: |
             echo "Testing pre-execution"
             ls -la
+          gh_version: "2.76.2"
+          iflow_version: "0.2.4"
 ```
 
 ## GitHub Actions Integration
@@ -347,11 +391,16 @@ jobs:
 
 The repository includes several example workflows:
 
-1. **Issue Triage** (`issue-triage.yaml`): Automatically label new issues
-2. **Issue Killer** (`issue-killer.yml`): Implement features based on GitHub issues
-3. **PR Review** (`pr-review.yml`): Automated code review for pull requests
-4. **PR Review Killer** (`pr-review-killer.yml`): Direct code modifications via PR comments
-5. **Vibe Ideas** (`vibe-ideas.yml`): Generate project ideas and suggestions
+1. **iFlow CLI Assistant** (`iflow-cli-assistant.yml`): AI-powered PR and issue assistance
+2. **iFlow with MCP** (`iflow-with-mcp.yml`): Model Context Protocol integration
+3. **Issue Triage** (`issue-triage.yaml`): Automatically label new issues
+4. **Issue Killer** (`issue-killer.yml`): Implement features based on GitHub issues
+5. **PR Review** (`pr-review.yml`): Automated code review for pull requests
+6. **PR Review Killer** (`pr-review-killer.yml`): Direct code modifications via PR comments
+7. **Vibe Ideas** (`vibe-ideas.yml`): Generate project ideas and suggestions
+8. **Unit Tests** (`unittest.yml`): Automated testing
+9. **Release CI Image** (`release-ci-image.yml`): Docker image building and publishing
+10. **Deploy Homepage** (`deploy-homepage.yml`): Documentation deployment
 
 ### Integration Patterns
 
@@ -378,6 +427,8 @@ The repository includes several example workflows:
       npm install
       npm run build
     extra_args: "--verbose --format markdown"
+    gh_version: "2.76.2"
+    iflow_version: "0.2.4"
 
 - name: Use analysis results
   run: |
@@ -413,6 +464,12 @@ The repository includes several example workflows:
 - **Solution**: Check command syntax and working directory
 - **Debug**: Test commands in local Docker container
 
+#### Version Compatibility Issues
+
+- **Symptom**: GitHub CLI or iFlow CLI version conflicts
+- **Solution**: Use specific version parameters or default versions
+- **Debug**: Check version compatibility matrix
+
 ### Debug Mode
 
 Enable verbose logging by setting environment variables:
@@ -423,6 +480,10 @@ export INPUT_PROMPT="Debug test"
 export INPUT_API_KEY="your-key"
 export GITHUB_ACTIONS="true"  # Simulate GitHub Actions
 ./iflow-action --use-env-vars=true
+
+# With specific versions for testing
+export INPUT_GH_VERSION="2.76.2"
+export INPUT_IFLOW_VERSION="0.2.4"
 ```
 
 ### Performance Optimization
@@ -431,6 +492,7 @@ export GITHUB_ACTIONS="true"  # Simulate GitHub Actions
 - **Model selection**: Choose appropriate model for task complexity
 - **Pre-execution optimization**: Cache dependencies when possible
 - **Output handling**: Use `extra_args` to limit output size
+- **Version management**: Use compatible tool versions
 
 ### Security Considerations
 
@@ -438,3 +500,4 @@ export GITHUB_ACTIONS="true"  # Simulate GitHub Actions
 - **Command injection**: Validate all user inputs in `precmd`
 - **File permissions**: Ensure proper file permissions in Docker
 - **Network security**: Use HTTPS endpoints for API calls
+- **Version pinning**: Pin specific versions for reproducible builds
