@@ -6,19 +6,21 @@ import (
 
 // MockActions is a mock implementation of the Actions interface for testing
 type MockActions struct {
-	Outputs         map[string]string
-	Failed          bool
-	FailureMessage  string
-	SummaryContent  string
-	InfoMessages    []string
-	IsGHActions     bool
+	Outputs          map[string]string
+	Failed           bool
+	FailureMessage   string
+	SummaryContent   string
+	InfoMessages     []string
+	WarningMessages  []string
+	IsGHActions      bool
 }
 
 // NewMockActions creates a new mock Actions instance
 func NewMockActions() *MockActions {
 	return &MockActions{
-		Outputs:      make(map[string]string),
-		InfoMessages: []string{},
+		Outputs:       make(map[string]string),
+		InfoMessages:  []string{},
+		WarningMessages: []string{},
 	}
 }
 
@@ -43,6 +45,11 @@ func (m *MockActions) Info(message string) {
 	m.InfoMessages = append(m.InfoMessages, message)
 }
 
+// Warning stores warning messages
+func (m *MockActions) Warning(message string) {
+	m.WarningMessages = append(m.WarningMessages, message)
+}
+
 // IsGitHubActions returns the mock value
 func (m *MockActions) IsGitHubActions() bool {
 	return m.IsGHActions
@@ -55,6 +62,7 @@ func (m *MockActions) Reset() {
 	m.FailureMessage = ""
 	m.SummaryContent = ""
 	m.InfoMessages = []string{}
+	m.WarningMessages = []string{}
 	m.IsGHActions = false
 }
 

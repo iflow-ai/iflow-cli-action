@@ -16,8 +16,8 @@ import (
 
 // App represents the main application
 type App struct {
-	config    *config.Config
-	ghActions github.Actions
+	config      *config.Config
+	ghActions   github.Actions
 	iflowClient *iflow.Client
 }
 
@@ -78,6 +78,12 @@ func (a *App) Run() error {
 		return err
 	}
 
+	// Print recent session file content
+	if err := a.printRecentSessionFile(); err != nil {
+		// Don't fail the entire execution if session file printing fails
+		a.ghActions.Warning(fmt.Sprintf("Failed to print session file: %v", err))
+	}
+
 	if exitCode != 0 {
 		return errors.NewExecutionError(fmt.Sprintf("iFlow CLI exited with code %d", exitCode), nil, nil)
 	}
@@ -135,15 +141,15 @@ func (a *App) handleOutputs(result string, exitCode int) error {
 
 		// Write to GitHub Actions step summary
 		configMap := map[string]interface{}{
-			"isTimeout":    a.config.IsTimeout,
-			"timeout":      a.config.Timeout,
-			"model":        a.config.Model,
-			"baseURL":      a.config.BaseURL,
-			"workingDir":   a.config.WorkingDir,
-			"extraArgs":    a.config.ExtraArgs,
-			"prompt":       a.config.Prompt,
+			"isTimeout":  a.config.IsTimeout,
+			"timeout":    a.config.Timeout,
+			"model":      a.config.Model,
+			"baseURL":    a.config.BaseURL,
+			"workingDir": a.config.WorkingDir,
+			"extraArgs":  a.config.ExtraArgs,
+			"prompt":     a.config.Prompt,
 		}
-		
+
 		summaryContent := github.GenerateSummaryMarkdown(result, exitCode, configMap)
 		a.ghActions.WriteStepSummary(summaryContent)
 	} else {
@@ -158,4 +164,9 @@ func (a *App) handleOutputs(result string, exitCode int) error {
 	}
 
 	return nil
+}
+
+// printRecentSessionFile latest session jsonl file content
+func (a *App) printRecentSessionFile() error {
+	return a.iflowClient.PrintRecentSessionFile()
 }

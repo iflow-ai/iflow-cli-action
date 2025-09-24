@@ -12,6 +12,7 @@ type Actions interface {
 	SetFailed(message string)
 	WriteStepSummary(content string)
 	Info(message string)
+	Warning(message string)
 	IsGitHubActions() bool
 }
 
@@ -81,6 +82,15 @@ func (g *GitHubActions) Info(message string) {
 		fmt.Printf("::notice::%s\n", message)
 	} else {
 		fmt.Printf("INFO: %s\n", message)
+	}
+}
+
+// Warning logs a warning message
+func (g *GitHubActions) Warning(message string) {
+	if g.IsGitHubActions() {
+		fmt.Printf("::warning::%s\n", message)
+	} else {
+		fmt.Printf("WARNING: %s\n", message)
 	}
 }
 
