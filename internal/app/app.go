@@ -62,6 +62,9 @@ func (a *App) Run() error {
 		return err
 	}
 
+	// Print ~/.iflow/ directory contents
+	a.printIFlowDirectory()
+
 	// Execute pre-command if specified
 	if err := a.iflowClient.ExecutePreCmd(); err != nil {
 		return err
@@ -169,4 +172,23 @@ func (a *App) handleOutputs(result string, exitCode int) error {
 // printRecentSessionFile latest session jsonl file content
 func (a *App) printRecentSessionFile() error {
 	return a.iflowClient.PrintRecentSessionFile()
+}
+
+func (a *App) printIFlowDirectory() {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		a.ghActions.Warning(fmt.Sprintf("Failed to get home directory: %v", err))
+		return
+	}
+
+	iflowDir := fmt.Sprintf("%s/.iflow", homeDir)
+
+	cmd := exec.Command("ls", "-al", iflowDir)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		a.ghActions.Warning(fmt.Sprintf("Failed to list ~/.iflow/ directory: %v", err))
+		return
+	}
+
+	a.ghActions.Info(fmt.Sprintf("~/.iflow/ directory contents:\n%s", string(output)))
 }
