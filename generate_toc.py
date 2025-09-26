@@ -15,7 +15,7 @@ def load_ignore_config():
     ignore_file = Path(".tocignore")
     default_ignores = {
         "files": [],
-        "patterns": [".git/*", "node_modules/*", "*.min.md"],
+        "patterns": [".git/*", "node_modules/*", "*.min.md", "IFLOW.md"],
     }
 
     if ignore_file.exists():

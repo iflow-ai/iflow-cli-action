@@ -1,0 +1,271 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://iflow-ai.github.io/iflow-cli-action/iflow-settings.schema.json",
+  "title": "iFlow CLI Settings",
+  "description": "Configuration schema for iFlow CLI settings.json file",
+  "type": "object",
+  "properties": {
+    "selectedAuthType": {
+      "type": "string",
+      "description": "认证类型，用于指定连接API的认证方式。'iflow'表示使用心流认证，'openai-compatible'支持任何提供OpenAI协议的模型服务商",
+      "default": "iflow"
+    },
+    "apiKey": {
+      "type": "string",
+      "description": "API密钥，用于模型调用的身份验证"
+    },
+    "baseUrl": {
+      "type": "string",
+      "description": "API服务的基础URL地址",
+      "default": "https://apis.iflow.cn/v1"
+    },
+    "modelName": {
+      "type": "string",
+      "description": "要使用的AI模型名称",
+      "default": "Qwen3-Coder"
+    },
+    "searchApiKey": {
+      "type": "string",
+      "description": "搜索功能的API密钥，用于网络搜索服务。使用iFlow登录时可直接使用iFlow的apiKey"
+    },
+    "contextFileName": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "上下文文件名（如IFLOW.md、AGENTS.md）。可以是单个文件名或文件名列表",
+      "default": "IFLOW.md"
+    },
+    "bugCommand": {
+      "type": "object",
+      "description": "覆盖/bug命令的默认 URL。",
+      "properties": {
+        "urlTemplate": {
+          "type": "string",
+          "description": "包含{title}和{info}占位符的 URL。"
+        }
+      }
+    },
+    "fileFiltering": {
+      "type": "object",
+      "description": "控制 @ 命令和文件发现工具的 git 感知文件过滤行为。",
+      "properties": {
+        "respectGitIgnore": {
+          "type": "boolean",
+          "description": "为true时，git 忽略的文件（如node_modules/、dist/、.env）会自动从 @ 命令和文件列表操作中排除。"
+        },
+        "enableRecursiveFileSearch": {
+          "type": "boolean",
+          "description": "启用递归文件搜索。"
+        }
+      }
+    },
+    "coreTools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "允许您指定应该提供给模型的核心工具名称列表。这可以用来限制内置工具集。查看/tools命令了解核心工具列表。您还可以为支持的工具指定命令特定限制，如ShellTool。例如,\"coreTools\": [\"ShellTool(ls -l)\"]将只允许执行ls -l命令。",
+      "default": []
+    },
+    "excludeTools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "允许您指定应该从CLI中排除的核心工具名称列表。同时列在excludeTools和coreTools中的工具会被排除。您还可以为支持的工具指定命令特定限制，如ShellTool。例如,\"excludeTools\": [\"ShellTool(rm -rf)\"]将阻止rm -rf命令。",
+      "default": []
+    },
+    "allowMCPServers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "允许您指定应该提供给CLI的 MCP 服务器名称列表。这可以用来限制要连接的 MCP 服务器集合。注意，如果设置了--allowed-mcp-server-names，此设置将被忽略。",
+      "default": []
+    },
+    "excludeMCPServers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "允许您指定应该从CLI中排除的 MCP 服务器名称列表。同时列在excludeMCPServers和allowMCPServers中的服务器会被排除。注意，如果设置了--allowed-mcp-server-names，此设置将被忽略。",
+      "default": []
+    },
+    "autoAccept": {
+      "type": "boolean",
+      "description": "控制 CLI 是否自动接受并执行被认为安全的工具调用（如只读操作），而无需显式用户确认。如果设置为true，CLI 将绕过被认为安全的工具的确认提示。",
+      "default": false
+    },
+    "theme": {
+      "type": "string",
+      "description": "设置 iFlow CLI 的视觉主题。",
+      "default": "Default"
+    },
+    "vimMode": {
+      "type": "boolean",
+      "description": "启用或禁用输入编辑的 vim 模式。启用后，输入区域支持 vim 风格的导航和编辑命令，具有 NORMAL 和 INSERT 模式。vim 模式状态显示在页脚中，并在会话间持续。",
+      "default": false
+    },
+    "sandbox": {
+      "type": [
+        "boolean",
+        "string"
+      ],
+      "description": "控制是否以及如何使用沙箱进行工具执行。如果设置为true，iFlow CLI 使用预构建的iflow-cli-sandboxDocker 镜像。更多信息请参见沙箱。",
+      "default": false
+    },
+    "mcpServers": {
+      "type": "object",
+      "description": "配置与一个或多个模型上下文协议（MCP）服务器的连接，用于发现和使用自定义工具。iFlow CLI 尝试连接到每个配置的 MCP 服务器以发现可用工具。如果多个 MCP 服务器暴露同名工具，工具名称将以您在配置中定义的服务器别名为前缀（如serverAlias__actualToolName）以避免冲突。注意，系统可能会从 MCP 工具定义中剥离某些模式属性以保持兼容性。",
+      "properties": {
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "启动 MCP 服务器要执行的命令。"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "传递给命令的参数。"
+            },
+            "env": {
+              "type": "object",
+              "description": "为服务器进程设置的环境变量。"
+            },
+            "cwd": {
+              "type": "string",
+              "description": "启动服务器的工作目录。"
+            },
+            "timeout": {
+              "type": "integer",
+              "description": "对此 MCP 服务器请求的超时时间（毫秒）。"
+            },
+            "trust": {
+              "type": "boolean",
+              "description": "信任此服务器并绕过所有工具调用确认。"
+            },
+            "includeTools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "要从此 MCP 服务器包含的工具名称列表。指定时，只有这里列出的工具才可从此服务器使用（白名单行为）。如果未指定，默认启用服务器的所有工具。"
+            },
+            "excludeTools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "要从此 MCP 服务器排除的工具名称列表。这里列出的工具将不可用于模型，即使它们由服务器暴露。"
+            }
+          },
+          "required": [
+            "command"
+          ]
+        }
+      }
+    },
+    "checkpointing": {
+      "type": "object",
+      "description": "配置检查点功能，允许您保存和恢复对话和文件状态。更多详情请参见检查点文档。",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "为true时，/restore命令可用。"
+        }
+      }
+    },
+    "preferredEditor": {
+      "type": "string",
+      "description": "指定查看差异时使用的首选编辑器。",
+      "default": "vscode"
+    },
+    "telemetry": {
+      "type": "object",
+      "description": "配置 iFlow CLI 的日志记录和指标收集。更多信息请参见遥测。",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "启用或禁用遥测功能。"
+        },
+        "target": {
+          "type": "string",
+          "description": "遥测目标，可为local和gcp。"
+        },
+        "otlpEndpoint": {
+          "type": "string",
+          "description": "OTLP 端点。"
+        },
+        "logPrompts": {
+          "type": "boolean",
+          "description": "是否记录提示。"
+        }
+      }
+    },
+    "hideTips": {
+      "type": "boolean",
+      "description": "启用或禁用 CLI 界面中的有用提示。",
+      "default": false
+    },
+    "hideBanner": {
+      "type": "boolean",
+      "description": "启用或禁用 CLI 界面中的启动横幅（ASCII 艺术 logo）。",
+      "default": false
+    },
+    "maxSessionTurns": {
+      "type": "integer",
+      "description": "设置会话的最大轮数。如果会话超过此限制，CLI 将停止处理并开始新的聊天。",
+      "default": -1
+    },
+    "summarizeToolOutput": {
+      "type": "object",
+      "description": "启用或禁用工具输出的摘要。您可以使用tokenBudget设置指定摘要的令牌预算。注意：目前只支持 run_shell_command工具。",
+      "properties": {
+        "run_shell_command": {
+          "type": "object",
+          "properties": {
+            "tokenBudget": {
+              "type": "integer",
+              "description": "摘要的令牌预算。"
+            }
+          }
+        }
+      }
+    },
+    "disableAutoUpdate": {
+      "type": "boolean",
+      "description": "禁用自动更新，设置为true会禁用自动更新功能",
+      "default": false
+    },
+    "tokensLimit": {
+      "type": "integer",
+      "description": "用于设置模型的上下文窗口长度",
+      "default": 128000
+    },
+    "compressionTokenThreshold": {
+      "type": "number",
+      "description": "用于控制自动压缩操作触发的阈值",
+      "default": 0.8
+    },
+    "useRipgrep": {
+      "type": "boolean",
+      "description": "是否开启Ripgrep",
+      "default": true
+    }
+  },
+  "required": [
+    "selectedAuthType",
+    "apiKey",
+    "baseUrl",
+    "modelName"
+  ],
+  "additionalProperties": true
+}
