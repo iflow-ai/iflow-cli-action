@@ -57,6 +57,7 @@ func init() {
 	rootCmd.Flags().StringVar(&cfg.PreCmd, "precmd", "", "Shell command(s) to execute before running iFlow CLI")
 	rootCmd.Flags().StringVar(&cfg.GhVersion, "gh-version", "", "Version of GitHub CLI to install")
 	rootCmd.Flags().StringVar(&cfg.IFlowVersion, "iflow-version", "", "Version of iFlow CLI to install")
+	rootCmd.Flags().BoolVar(&cfg.UseACP, "use-acp", false, "Enable ACP (Agent Communication Protocol) mode")
 	rootCmd.Flags().BoolVar(&cfg.UseEnvVars, "use-env-vars", false, "Use environment variables for configuration (GitHub Actions mode)")
 
 	// Mark required flags only if not in GitHub Actions mode - this will be validated later

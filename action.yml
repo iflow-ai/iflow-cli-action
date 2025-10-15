@@ -47,6 +47,10 @@ inputs:
     description: 'Version of iFlow CLI to install (e.g., "0.2.4"). If not specified, uses the pre-installed version.'
     required: false
     default: ''
+  use_acp:
+    description: 'Enable ACP (Agent Communication Protocol) mode for iFlow CLI'
+    required: false
+    default: 'false'
 
 outputs:
   result:

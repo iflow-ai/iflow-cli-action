@@ -21,6 +21,7 @@ type Config struct {
 	PreCmd       string // Shell command(s) to execute before running iFlow CLI
 	GhVersion    string // Version of GitHub CLI to install
 	IFlowVersion string // Version of iFlow CLI to install
+	UseACP       bool   // Flag to enable ACP (Agent Communication Protocol) mode
 	UseEnvVars   bool   // Flag to indicate whether to use environment variables (GitHub Actions mode)
 	IsTimeout    bool   // Flag to indicate if execution timed out
 }
@@ -88,6 +89,10 @@ func (c *Config) LoadFromEnv() error {
 
 	if iflowVersion := getInput("iflow_version"); iflowVersion != "" {
 		c.IFlowVersion = strings.TrimSpace(iflowVersion)
+	}
+
+	if useACP := getInput("use_acp"); useACP != "" {
+		c.UseACP = strings.ToLower(strings.TrimSpace(useACP)) == "true"
 	}
 
 	return nil

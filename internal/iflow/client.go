@@ -86,6 +86,11 @@ func (c *Client) Execute(ctx context.Context, prompt string) (string, int, error
 	// Prepare the command with --prompt and --yolo flags by default
 	args := []string{"--yolo", "--prompt", prompt}
 
+	// Add ACP mode if enabled
+	if c.config.UseACP {
+		args = append([]string{"--experimental-acp"}, args...)
+	}
+
 	// Parse and add extra arguments if provided
 	if c.config.ExtraArgs != "" {
 		extraArgs := c.parseExtraArgs(c.config.ExtraArgs)
