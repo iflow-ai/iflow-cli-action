@@ -180,7 +180,7 @@ jobs:
 | `base_url` | Custom base URL for iFlow API | ❌ No | `https://apis.iflow.cn/v1` |
 | `model` | Model name to use | ❌ No | `Qwen3-Coder` |
 | `working_directory` | Working directory to run iFlow CLI from | ❌ No | `.` |
-| `timeout` | Timeout for iFlow CLI execution in seconds (1-86400) | ❌ No | `86400` |
+| `timeout` | Timeout for iFlow CLI execution in seconds (1-86400) | ❌ No | `3600` |
 | `extra_args` | Additional command line arguments to pass to iFlow CLI (space-separated string) | ❌ No | `` |
 | `precmd` | Shell command(s) to execute before running iFlow CLI (e.g., "npm install", "git fetch") | ❌ No | `` |
 | `gh_version` | Version of GitHub CLI to install (e.g., "2.76.2"). If not specified, uses the pre-installed version. | ❌ No | `` |
@@ -331,7 +331,7 @@ ACP mode enables the iFlow CLI to use the Agent Communication Protocol, which pr
 - Enhanced context sharing
 - Improved task decomposition
 
-For more information about ACP mode, see the [iFlow CLI SDK documentation](https://crates.io/crates/iflow-cli-sdk-rust).
+**Note:** ACP mode is an experimental feature in iFlow CLI. When enabled, the CLI will start with the ACP adapter for enhanced agent capabilities.
 
 ### Using MCP Servers
 

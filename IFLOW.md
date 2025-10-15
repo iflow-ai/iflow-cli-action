@@ -253,7 +253,7 @@ ACP mode enables advanced agent communication capabilities, including:
 - Better context sharing
 - Advanced workflow coordination
 
-For more information, see the [iFlow CLI SDK](https://crates.io/crates/iflow-cli-sdk-rust).
+**Note:** ACP mode is an experimental feature available via the `--experimental-acp` flag in iFlow CLI.
 
 ## Common Development Tasks
 
