@@ -331,7 +331,7 @@ ACP mode enables the iFlow CLI to use the Agent Communication Protocol, which pr
 - Enhanced context sharing
 - Improved task decomposition
 
-**Note:** ACP mode is an experimental feature in iFlow CLI. When enabled, the CLI will start with the ACP adapter for enhanced agent capabilities.
+**Note:** ACP mode is an experimental feature in iFlow CLI. When enabled via the `--experimental-acp` flag, the CLI runs with enhanced agent communication capabilities.
 
 ### Using MCP Servers
 
