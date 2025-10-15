@@ -185,6 +185,7 @@ jobs:
 | `precmd` | Shell command(s) to execute before running iFlow CLI (e.g., "npm install", "git fetch") | ❌ No | `` |
 | `gh_version` | Version of GitHub CLI to install (e.g., "2.76.2"). If not specified, uses the pre-installed version. | ❌ No | `` |
 | `iflow_version` | Version of iFlow CLI to install (e.g., "0.2.4"). If not specified, uses the pre-installed version. | ❌ No | `` |
+| `use_acp` | Enable ACP (Agent Communication Protocol) mode for iFlow CLI | ❌ No | `false` |
 
 ## Outputs
 
@@ -309,6 +310,28 @@ You can specify custom versions of GitHub CLI and iFlow CLI to use in your workf
 ```
 
 This is useful when you need to ensure compatibility with specific versions of these tools or when you want to use features available only in certain versions.
+
+### Using ACP Mode
+
+The iFlow CLI supports ACP (Agent Communication Protocol) mode, which enables advanced agent communication capabilities. You can enable this mode by setting the `use_acp` input to `true`:
+
+```yaml
+- name: iFlow CLI with ACP Mode
+  uses: iflow-ai/iflow-cli-action@v1.4.0
+  with:
+    prompt: "Analyze this codebase using ACP mode"
+    api_key: ${{ secrets.IFLOW_API_KEY }}
+    use_acp: "true"
+```
+
+ACP mode enables the iFlow CLI to use the Agent Communication Protocol, which provides improved agent-to-agent communication and enhanced task execution capabilities. This is particularly useful for:
+
+- Complex multi-step workflows
+- Advanced agent coordination
+- Enhanced context sharing
+- Improved task decomposition
+
+For more information about ACP mode, see the [iFlow CLI SDK documentation](https://crates.io/crates/iflow-cli-sdk-rust).
 
 ### Using MCP Servers
 

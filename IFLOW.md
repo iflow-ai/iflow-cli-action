@@ -101,6 +101,9 @@ go test -race ./...
 
 # With specific versions
 ./iflow-action --prompt "Test" --api-key YOUR_API_KEY --gh-version "2.76.2" --iflow-version "0.2.4"
+
+# With ACP mode enabled
+./iflow-action --prompt "Analyze with ACP" --api-key YOUR_API_KEY --use-acp
 ```
 
 #### GitHub Actions Mode
@@ -117,6 +120,9 @@ INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"you
 
 # With version specifications
 INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW_VERSION="0.2.4" ./iflow-action --use-env-vars=true
+
+# With ACP mode enabled
+INPUT_PROMPT="Analyze with ACP" INPUT_API_KEY=your-key INPUT_USE_ACP="true" ./iflow-action --use-env-vars=true
 ```
 
 ## Code Structure
@@ -162,6 +168,7 @@ INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW
 | `precmd` | string | - | Shell commands to run before iFlow |
 | `gh_version` | string | - | Version of GitHub CLI to install (e.g., "2.76.2") |
 | `iflow_version` | string | - | Version of iFlow CLI to install (e.g., "0.2.4") |
+| `use_acp` | bool | `false` | Enable ACP (Agent Communication Protocol) mode |
 
 ### Output Variables
 
@@ -227,6 +234,26 @@ Specify exact versions for GitHub CLI and iFlow CLI:
     gh_version: "2.76.2"
     iflow_version: "0.2.4"
 ```
+
+### ACP Mode
+
+Enable ACP (Agent Communication Protocol) mode for enhanced agent capabilities:
+
+```yaml
+- uses: iflow-ai/iflow-cli-action@main
+  with:
+    prompt: "Analyze code with ACP mode"
+    api_key: ${{ secrets.IFLOW_API_KEY }}
+    use_acp: "true"
+```
+
+ACP mode enables advanced agent communication capabilities, including:
+- Improved agent-to-agent communication
+- Enhanced task execution
+- Better context sharing
+- Advanced workflow coordination
+
+For more information, see the [iFlow CLI SDK](https://crates.io/crates/iflow-cli-sdk-rust).
 
 ## Common Development Tasks
 

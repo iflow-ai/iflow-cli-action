@@ -176,6 +176,9 @@ jobs:
 | `timeout` | iFlow CLI 执行超时时间（秒）（1-86400） | ❌ 否 | `86400` |
 | `extra_args` | 传递给 iFlow CLI 的附加命令行参数（空格分隔的字符串） | ❌ 否 | `` |
 | `precmd` | 在运行 iFlow CLI 之前执行的 Shell 命令（例如 "npm install", "git fetch"） | ❌ 否 | `` |
+| `gh_version` | 要安装的 GitHub CLI 版本（例如 "2.76.2"）。如果未指定，使用预装版本。 | ❌ 否 | `` |
+| `iflow_version` | 要安装的 iFlow CLI 版本（例如 "0.2.4"）。如果未指定，使用预装版本。 | ❌ 否 | `` |
+| `use_acp` | 为 iFlow CLI 启用 ACP（代理通信协议）模式 | ❌ 否 | `false` |
 
 ## 输出参数
 
