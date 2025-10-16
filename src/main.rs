@@ -285,7 +285,7 @@ impl Cli {
                 // Handle the send_message result to catch timeout errors
                 match client.send_message(prompt, None).await {
                     Ok(()) => {
-                        println!("\n✅ Message sent successfully");
+                        println!("\n✅ Prompt message sent successfully");
                     }
                     Err(IFlowError::Timeout(msg)) => {
                         eprintln!("⏰ Timeout error occurred: {}", msg);
