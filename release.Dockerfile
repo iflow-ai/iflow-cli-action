@@ -5,8 +5,8 @@ FROM ghcr.io/iflow-ai/iflow-cli-action:main
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 # ENV PATH="/root/.cargo/bin:${PATH}"
 
-ENV IFLOW_CLI_ACTION_VERSION=v2.0.0-alpha.1
-RUN curl https://github.com/iflow-ai/iflow-cli-action/releases/download/${IFLOW_CLI_ACTION_VERSION}/iflow-cli-action -o /usr/local/bin/iflow-cli-action \
+ENV IFLOW_CLI_ACTION_VERSION=v2.0.0-alpha.3
+RUN wget https://github.com/iflow-ai/iflow-cli-action/releases/download/${IFLOW_CLI_ACTION_VERSION}/iflow-cli-action -O /usr/local/bin/iflow-cli-action \
     && chmod +x /usr/local/bin/iflow-cli-action
 
 # Set working directory for runtime
