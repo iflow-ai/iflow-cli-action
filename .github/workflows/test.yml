@@ -1,0 +1,55 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
+  pull_request:
+    paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@master
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+    
+    - name: Cache Cargo registry
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Cache Cargo index
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Cache Cargo build
+      uses: actions/cache@v4
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Run tests
+      run: |
+        npx -v
+        npm install -g @iflow-ai/iflow-cli@latest
+        mkdir -p ~/.iflow
+        cat > ~/.iflow/settings.json <<'EOF'
+        ${{ secrets.IFLOW_SETTINGS_JSON }}
+        EOF
+        iflow --version
+        RUST_LOG=debug cargo test -- --nocapture
