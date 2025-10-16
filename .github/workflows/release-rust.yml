@@ -66,6 +66,7 @@ jobs:
           mkdir -p dist
           # Copy the binary to dist and archive it
           cp target/${{ matrix.target }}/release/${{ env.BIN_NAME }} dist/${{ env.BIN_NAME }}
+          file dist/${{ env.BIN_NAME }}
           tar -C dist -czf "dist/${{ steps.vars.outputs.asset_name }}.tar.gz" "${{ env.BIN_NAME }}"
 
       - name: Upload build artifact
@@ -80,7 +81,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          draft: false
-          prerelease: false
+          draft: true
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
