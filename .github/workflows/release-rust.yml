@@ -1,0 +1,86 @@
+name: Release Rust binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+  # Optional: allow manual trigger for testing (does not create a Release, artifacts are uploaded)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            archive: tar.gz
+            bin_ext: ""
+
+    env:
+      BIN_NAME: iflow-cli-action
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build (release)
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Set variables
+        id: vars
+        shell: bash
+        run: |
+          # If triggered by a tag, use the tag as version; otherwise, use manual + short SHA
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF_NAME}"
+          else
+            VERSION="manual-${GITHUB_SHA::7}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "asset_name=${BIN_NAME}_${VERSION}_${{ matrix.target }}" >> $GITHUB_OUTPUT
+
+      - name: Package (tar.gz)
+        shell: bash
+        run: |
+          mkdir -p dist
+          # Copy the binary to dist and archive it
+          cp target/${{ matrix.target }}/release/${{ env.BIN_NAME }} dist/${{ env.BIN_NAME }}
+          tar -C dist -czf "dist/${{ steps.vars.outputs.asset_name }}.tar.gz" "${{ env.BIN_NAME }}"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.vars.outputs.asset_name }}
+          path: |
+            dist/*
+
+      - name: Publish GitHub Release asset
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
