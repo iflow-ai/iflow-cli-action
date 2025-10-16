@@ -621,6 +621,7 @@ dependencies = [
 [[package]]
 name = "iflow-cli-sdk-rust"
 version = "0.1.0"
+source = "git+https://github.com/vibe-ideas/iflow-cli-sdk-rust#ce1053dfa2f54cc4aaf548da9b04e7595196f6c6"
 dependencies = [
  "agent-client-protocol",
  "anyhow",
