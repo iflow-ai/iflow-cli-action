@@ -9,7 +9,9 @@ on:
   workflow_dispatch:
   # Also run on pushes to main branch
   push:
-  #   branches: [ main ]
+    branches:
+      - "*"
+
 
 permissions:
   contents: read
