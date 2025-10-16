@@ -203,22 +203,42 @@ impl Cli {
                 println!("📥 Receiving responses...");
                 let mut message_stream = client.messages();
 
+                // Store plan entries to track progress
+                let mut plan_entries: Vec<(String, iflow_cli_sdk_rust::types::PlanStatus)> = Vec::new();
+
                 let message_task = tokio::task::spawn_local(async move {
                     let mut stdout = std::io::stdout();
 
                     while let Some(message) = message_stream.next().await {
                         match message {
                             Message::Assistant { content } => {
-                                print!("{}", content);
+                                print!("🤖 Assistant: {}", content);
                                 stdout
                                     .flush()
                                     .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
                             }
                             Message::ToolCall { id, name, status } => {
-                                println!("\n🔧 Tool call: {} ({}): {}", id, name, status);
+                                println!("\n🔧 Tool call: {} ({}): {:?}", id, name, status);
                             }
                             Message::Plan { entries } => {
-                                println!("\n📋 Plan update received: {:?}", entries);
+                                // Update plan entries
+                                plan_entries.clear();
+                                for entry in entries {
+                                    plan_entries.push((entry.content, entry.status));
+                                }
+                                
+                                // Display all plan entries with status
+                                if !plan_entries.is_empty() {
+                                    println!("\n📋 Plan:");
+                                    for (i, (content, status)) in plan_entries.iter().enumerate() {
+                                        let status_icon = match status {
+                                            iflow_cli_sdk_rust::types::PlanStatus::Pending => "⏳",
+                                            iflow_cli_sdk_rust::types::PlanStatus::InProgress => "🔄",
+                                            iflow_cli_sdk_rust::types::PlanStatus::Completed => "✅",
+                                        };
+                                        println!("  {}. {} {}", i + 1, status_icon, content);
+                                    }
+                                }
                             }
                             Message::TaskFinish { .. } => {
                                 println!("\n✅ Task completed");
@@ -248,7 +268,7 @@ impl Cli {
                 // Handle the send_message result to catch timeout errors
                 match client.send_message(prompt, None).await {
                     Ok(()) => {
-                        println!("✅ Message sent successfully");
+                        println!("\n✅ Message sent successfully");
                     }
                     Err(IFlowError::Timeout(msg)) => {
                         eprintln!("⏰ Timeout error occurred: {}", msg);
