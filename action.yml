@@ -47,6 +47,10 @@ inputs:
     description: 'Version of iFlow CLI to install (e.g., "0.2.4"). If not specified, uses the pre-installed version.'
     required: false
     default: ''
+  debug:
+    description: 'Enable debug logging'
+    required: false
+    default: 'false'
 
 outputs:
   result:

@@ -23,6 +23,10 @@ struct Cli {
     #[clap(long, env = "INPUT_API_KEY")]
     api_key: Option<String>,
 
+    /// Enable debug logging
+    #[clap(long, env = "INPUT_DEBUG")]
+    debug: bool,
+
     /// Complete settings JSON configuration
     #[clap(long, env = "INPUT_SETTINGS_JSON")]
     settings_json: Option<String>,
@@ -178,8 +182,14 @@ impl Cli {
         use std::io::Write;
 
         // Initialize logging with environment variable support
+        let log_level = if self.debug {
+            tracing::Level::DEBUG
+        } else {
+            tracing::Level::INFO
+        };
+        
         tracing_subscriber::fmt()
-            .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+            .with_max_level(log_level)
             .init();
 
         println!("🚀 Starting iFlow WebSocket client...");
