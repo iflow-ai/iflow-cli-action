@@ -7,13 +7,12 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Set working directory
 WORKDIR /app
+# Copy all source code
+COPY . .
 
 # Build dependencies only (for better caching)
 RUN cargo build --release \
     && rm -rf target/release/iflow-cli-action*
-
-# Copy all source code
-COPY . .
 
 # Build the application
 RUN cargo build --release
