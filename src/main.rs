@@ -27,7 +27,11 @@ struct Cli {
     settings_json: Option<String>,
 
     /// Base URL for the iFlow API
-    #[clap(long, env = "INPUT_BASE_URL", default_value = "https://apis.iflow.cn/v1")]
+    #[clap(
+        long,
+        env = "INPUT_BASE_URL",
+        default_value = "https://apis.iflow.cn/v1"
+    )]
     base_url: String,
 
     /// Model name to use
@@ -61,11 +65,11 @@ struct Cli {
     /// Use environment variables for configuration (GitHub Actions mode)
     #[clap(long, env = "USE_ENV_VARS")]
     use_env_vars: bool,
-    
+
     /// Path to the settings file (for testing purposes)
     #[clap(long, env = "SETTINGS_FILE_PATH")]
     settings_file_path: Option<String>,
-    
+
     /// Use WebSocket client instead of CLI
     #[clap(long, env = "USE_WEBSOCKET")]
     use_websocket: bool,
@@ -85,7 +89,9 @@ impl Cli {
 
         // Validate timeout range (1 second to 24 hours)
         if self.timeout < 1 || self.timeout > 86400 {
-            return Err("timeout value is out of range. Must be between 1 and 86400 seconds".to_string());
+            return Err(
+                "timeout value is out of range. Must be between 1 and 86400 seconds".to_string(),
+            );
         }
 
         // Validate settings_json if provided
@@ -107,17 +113,17 @@ impl Cli {
         } else {
             // Get home directory
             let home_dir = dirs::home_dir().ok_or("failed to get home directory")?;
-            
+
             // Create .iflow directory
             let iflow_dir = home_dir.join(".iflow");
             fs::create_dir_all(&iflow_dir)
                 .map_err(|e| format!("failed to create .iflow directory: {}", e))?;
-            
+
             // Path to settings.json file
             let settings_file = iflow_dir.join("settings.json");
             settings_file.to_string_lossy().to_string()
         };
-        
+
         let settings_data = if let Some(ref settings_json) = self.settings_json {
             if !settings_json.is_empty() {
                 // Use provided settings JSON directly
@@ -134,20 +140,20 @@ impl Cli {
             // Create settings from individual parameters
             self.create_settings_from_params()?
         };
-        
+
         // Write settings to file
         // Ensure the parent directory exists
         if let Some(parent) = std::path::Path::new(&settings_file_path).parent() {
             fs::create_dir_all(parent)
                 .map_err(|e| format!("failed to create parent directory: {}", e))?;
         }
-        
+
         fs::write(&settings_file_path, settings_data)
             .map_err(|e| format!("failed to write settings file: {}", e))?;
-        
+
         Ok(())
     }
-    
+
     /// Creates settings JSON from individual parameters, similar to the Go implementation
     fn create_settings_from_params(&self) -> Result<String, String> {
         let settings = serde_json::json!({
@@ -158,18 +164,18 @@ impl Cli {
             "modelName": self.model,
             "searchApiKey": self.api_key.as_ref().unwrap_or(&String::new())
         });
-        
+
         serde_json::to_string_pretty(&settings)
             .map_err(|e| format!("failed to marshal settings: {}", e))
     }
-    
+
     /// Run iFlow using WebSocket client
     async fn run_websocket(&self) -> Result<(), String> {
         use futures::stream::StreamExt;
-        use iflow_cli_sdk_rust::{IFlowClient, IFlowOptions, Message};
         use iflow_cli_sdk_rust::error::IFlowError;
+        use iflow_cli_sdk_rust::{IFlowClient, IFlowOptions, Message};
         use std::io::Write;
-        
+
         // Initialize logging with environment variable support
         tracing_subscriber::fmt()
             .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
@@ -196,7 +202,10 @@ impl Cli {
                 let mut client = IFlowClient::new(Some(options));
 
                 println!("🔗 Connecting to iFlow via WebSocket...");
-                client.connect().await.map_err(|e| format!("Failed to connect: {}", e))?;
+                client
+                    .connect()
+                    .await
+                    .map_err(|e| format!("Failed to connect: {}", e))?;
                 println!("✅ Connected to iFlow via WebSocket");
 
                 // Receive and process responses
@@ -204,7 +213,8 @@ impl Cli {
                 let mut message_stream = client.messages();
 
                 // Store plan entries to track progress
-                let mut plan_entries: Vec<(String, iflow_cli_sdk_rust::types::PlanStatus)> = Vec::new();
+                let mut plan_entries: Vec<(String, iflow_cli_sdk_rust::types::PlanStatus)> =
+                    Vec::new();
 
                 let message_task = tokio::task::spawn_local(async move {
                     let mut stdout = std::io::stdout();
@@ -215,7 +225,9 @@ impl Cli {
                                 print!("🤖 Assistant: {}", content);
                                 stdout
                                     .flush()
-                                    .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
+                                    .map_err(|err| -> Box<dyn std::error::Error> {
+                                        Box::new(err)
+                                    })?;
                             }
                             Message::ToolCall { id, name, status } => {
                                 println!("\n🔧 Tool call: {} ({}): {:?}", id, name, status);
@@ -226,15 +238,19 @@ impl Cli {
                                 for entry in entries {
                                     plan_entries.push((entry.content, entry.status));
                                 }
-                                
+
                                 // Display all plan entries with status
                                 if !plan_entries.is_empty() {
                                     println!("\n📋 Plan:");
                                     for (i, (content, status)) in plan_entries.iter().enumerate() {
                                         let status_icon = match status {
                                             iflow_cli_sdk_rust::types::PlanStatus::Pending => "⏳",
-                                            iflow_cli_sdk_rust::types::PlanStatus::InProgress => "🔄",
-                                            iflow_cli_sdk_rust::types::PlanStatus::Completed => "✅",
+                                            iflow_cli_sdk_rust::types::PlanStatus::InProgress => {
+                                                "🔄"
+                                            }
+                                            iflow_cli_sdk_rust::types::PlanStatus::Completed => {
+                                                "✅"
+                                            }
                                         };
                                         println!("  {}. {} {}", i + 1, status_icon, content);
                                     }
@@ -263,8 +279,8 @@ impl Cli {
 
                 // Send a message
                 let prompt = self.prompt.as_ref().unwrap();
-                println!("📤 Sending: {}", prompt);
-                
+                println!("📤 User prompt: {}", prompt);
+
                 // Handle the send_message result to catch timeout errors
                 match client.send_message(prompt, None).await {
                     Ok(()) => {
@@ -304,14 +320,17 @@ impl Cli {
 
                 // Disconnect
                 println!("\n🔌 Disconnecting...");
-                client.disconnect().await.map_err(|e| format!("Failed to disconnect: {}", e))?;
+                client
+                    .disconnect()
+                    .await
+                    .map_err(|e| format!("Failed to disconnect: {}", e))?;
                 println!("👋 Disconnected from iFlow");
 
                 Ok::<(), Box<dyn std::error::Error>>(())
             })
             .await
             .map_err(|e| format!("WebSocket client error: {}", e))?;
-            
+
         Ok(())
     }
 }
@@ -319,25 +338,25 @@ impl Cli {
 #[tokio::main]
 async fn main() -> Result<(), String> {
     let cli = Cli::parse();
-    
+
     // Validate the arguments
     if let Err(e) = cli.validate() {
         eprintln!("Validation Error: {}", e);
         std::process::exit(1);
     }
-    
+
     // Configure iFlow settings
     if let Err(e) = cli.configure() {
         eprintln!("Configuration Error: {}", e);
         std::process::exit(1);
     }
-    
+
     // Run WebSocket client if requested
     if cli.use_websocket {
         cli.run_websocket().await?;
         return Ok(());
     }
-    
+
     // Print the parsed arguments for verification
     println!("Parsed arguments:");
     println!("  prompt: {:?}", cli.prompt);
@@ -353,6 +372,6 @@ async fn main() -> Result<(), String> {
     println!("  iflow_version: {:?}", cli.iflow_version);
     println!("  use_env_vars: {}", cli.use_env_vars);
     println!("  use_websocket: {}", cli.use_websocket);
-    
+
     Ok(())
 }

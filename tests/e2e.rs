@@ -8,10 +8,10 @@ fn test_basic_configuration_with_api_key() {
         .prefix("iflow_cli_test")
         .tempdir()
         .expect("Failed to create temporary directory");
-    
+
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     let output = Command::new("cargo")
         .args([
             "run",
@@ -27,13 +27,17 @@ fn test_basic_configuration_with_api_key() {
         ])
         .output()
         .expect("Failed to execute test");
-    
+
     // Check that the command succeeded
-    assert!(output.status.success(), "Command failed with stderr: {}", String::from_utf8_lossy(&output.stderr));
-    
+    assert!(
+        output.status.success(),
+        "Command failed with stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
     // Check that settings file was created
     assert!(settings_file.exists(), "Settings file was not created");
-    
+
     // Check the content of the settings file
     let content = fs::read_to_string(&settings_file).expect("Failed to read settings file");
     assert!(content.contains("\"apiKey\": \"test-api-key\""));
@@ -47,10 +51,10 @@ fn test_configuration_with_settings_json() {
         .prefix("iflow_cli_test")
         .tempdir()
         .expect("Failed to create temporary directory");
-    
+
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     let output = Command::new("cargo")
         .args([
             "run",
@@ -66,13 +70,17 @@ fn test_configuration_with_settings_json() {
         ])
         .output()
         .expect("Failed to execute test");
-    
+
     // Check that the command succeeded
-    assert!(output.status.success(), "Command failed with stderr: {}", String::from_utf8_lossy(&output.stderr));
-    
+    assert!(
+        output.status.success(),
+        "Command failed with stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
     // Check that settings file was created
     assert!(settings_file.exists(), "Settings file was not created");
-    
+
     // Check the content of the settings file
     let content = fs::read_to_string(&settings_file).expect("Failed to read settings file");
     assert!(content.contains("\"apiKey\": \"test-key\""));
@@ -88,10 +96,10 @@ fn test_configuration_with_multiline_settings_json() {
         .prefix("iflow_cli_test")
         .tempdir()
         .expect("Failed to create temporary directory");
-    
+
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     let output = Command::new("cargo")
         .args([
             "run",
@@ -107,13 +115,17 @@ fn test_configuration_with_multiline_settings_json() {
         ])
         .output()
         .expect("Failed to execute test");
-    
+
     // Check that the command succeeded
-    assert!(output.status.success(), "Command failed with stderr: {}", String::from_utf8_lossy(&output.stderr));
-    
+    assert!(
+        output.status.success(),
+        "Command failed with stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
     // Check that settings file was created
     assert!(settings_file.exists(), "Settings file was not created");
-    
+
     // Check the content of the settings file
     let content = fs::read_to_string(&settings_file).expect("Failed to read settings file");
     assert!(content.contains("\"customField\": \"value\\nwith\\nnewlines\""));
@@ -126,10 +138,10 @@ fn test_validation_error_missing_prompt() {
         .prefix("iflow_cli_test")
         .tempdir()
         .expect("Failed to create temporary directory");
-    
+
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     let output = Command::new("cargo")
         .args([
             "run",
@@ -143,10 +155,13 @@ fn test_validation_error_missing_prompt() {
         ])
         .output()
         .expect("Failed to execute test");
-    
+
     // Check that the command failed
-    assert!(!output.status.success(), "Command should have failed but succeeded");
-    
+    assert!(
+        !output.status.success(),
+        "Command should have failed but succeeded"
+    );
+
     // Check the error message
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(stderr.contains("Validation Error: prompt input is required and cannot be empty"));
@@ -159,10 +174,10 @@ fn test_validation_error_missing_api_key_and_settings_json() {
         .prefix("iflow_cli_test")
         .tempdir()
         .expect("Failed to create temporary directory");
-    
+
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     let output = Command::new("cargo")
         .args([
             "run",
@@ -176,10 +191,13 @@ fn test_validation_error_missing_api_key_and_settings_json() {
         ])
         .output()
         .expect("Failed to execute test");
-    
+
     // Check that the command failed
-    assert!(!output.status.success(), "Command should have failed but succeeded");
-    
+    assert!(
+        !output.status.success(),
+        "Command should have failed but succeeded"
+    );
+
     // Check the error message
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(stderr.contains("Validation Error: api_key input is required and cannot be empty"));
@@ -192,10 +210,10 @@ fn test_validation_error_invalid_settings_json() {
         .prefix("iflow_cli_test")
         .tempdir()
         .expect("Failed to create temporary directory");
-    
+
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     let output = Command::new("cargo")
         .args([
             "run",
@@ -211,10 +229,13 @@ fn test_validation_error_invalid_settings_json() {
         ])
         .output()
         .expect("Failed to execute test");
-    
+
     // Check that the command failed
-    assert!(!output.status.success(), "Command should have failed but succeeded");
-    
+    assert!(
+        !output.status.success(),
+        "Command should have failed but succeeded"
+    );
+
     // Check the error message
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(stderr.contains("Validation Error: invalid settings_json provided"));
