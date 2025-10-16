@@ -1,5 +1,6 @@
 use clap::Parser;
 use std::fs;
+use std::env;
 
 /// iFlow CLI Action wrapper
 #[derive(Parser, Debug)]
@@ -337,7 +338,16 @@ impl Cli {
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
-    let cli = Cli::parse();
+    // Check if we're running in GitHub Actions environment
+    let is_github_actions = env::var("GITHUB_ACTIONS").is_ok();
+    
+    // Parse CLI arguments
+    let mut cli = Cli::parse();
+    
+    // If we're in GitHub Actions, enable websocket by default
+    if is_github_actions && !cli.use_websocket {
+        cli.use_websocket = true;
+    }
 
     // Validate the arguments
     if let Err(e) = cli.validate() {
@@ -372,6 +382,11 @@ async fn main() -> Result<(), String> {
     println!("  iflow_version: {:?}", cli.iflow_version);
     println!("  use_env_vars: {}", cli.use_env_vars);
     println!("  use_websocket: {}", cli.use_websocket);
+    
+    // If we're in GitHub Actions and using WebSocket, print a notice
+    if is_github_actions && cli.use_websocket {
+        println!("ℹ️  Running in GitHub Actions mode with WebSocket client enabled by default");
+    }
 
     Ok(())
 }
