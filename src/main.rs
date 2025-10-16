@@ -1,6 +1,5 @@
 use clap::Parser;
 use std::fs;
-use std::path::Path;
 
 /// iFlow CLI Action wrapper
 #[derive(Parser, Debug)]
@@ -66,6 +65,10 @@ struct Cli {
     /// Path to the settings file (for testing purposes)
     #[clap(long, env = "SETTINGS_FILE_PATH")]
     settings_file_path: Option<String>,
+    
+    /// Use WebSocket client instead of CLI
+    #[clap(long, env = "USE_WEBSOCKET")]
+    use_websocket: bool,
 }
 
 impl Cli {
@@ -134,7 +137,7 @@ impl Cli {
         
         // Write settings to file
         // Ensure the parent directory exists
-        if let Some(parent) = Path::new(&settings_file_path).parent() {
+        if let Some(parent) = std::path::Path::new(&settings_file_path).parent() {
             fs::create_dir_all(parent)
                 .map_err(|e| format!("failed to create parent directory: {}", e))?;
         }
@@ -159,9 +162,142 @@ impl Cli {
         serde_json::to_string_pretty(&settings)
             .map_err(|e| format!("failed to marshal settings: {}", e))
     }
+    
+    /// Run iFlow using WebSocket client
+    async fn run_websocket(&self) -> Result<(), String> {
+        use futures::stream::StreamExt;
+        use iflow_cli_sdk_rust::{IFlowClient, IFlowOptions, Message};
+        use iflow_cli_sdk_rust::error::IFlowError;
+        use std::io::Write;
+        
+        // Initialize logging with environment variable support
+        tracing_subscriber::fmt()
+            .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+            .init();
+
+        println!("🚀 Starting iFlow WebSocket client...");
+
+        // Use LocalSet for spawn_local compatibility
+        let local = tokio::task::LocalSet::new();
+        local
+            .run_until(async {
+                // Configure client options with WebSocket configuration and custom timeout
+                let custom_timeout_secs = self.timeout as f64;
+                let options = IFlowOptions::new()
+                    .with_websocket_config(iflow_cli_sdk_rust::types::WebSocketConfig::auto_start())
+                    .with_timeout(custom_timeout_secs)
+                    .with_process_config(
+                        iflow_cli_sdk_rust::types::ProcessConfig::new()
+                            .enable_auto_start()
+                            .start_port(8090),
+                    );
+
+                // Create and connect client
+                let mut client = IFlowClient::new(Some(options));
+
+                println!("🔗 Connecting to iFlow via WebSocket...");
+                client.connect().await.map_err(|e| format!("Failed to connect: {}", e))?;
+                println!("✅ Connected to iFlow via WebSocket");
+
+                // Receive and process responses
+                println!("📥 Receiving responses...");
+                let mut message_stream = client.messages();
+
+                let message_task = tokio::task::spawn_local(async move {
+                    let mut stdout = std::io::stdout();
+
+                    while let Some(message) = message_stream.next().await {
+                        match message {
+                            Message::Assistant { content } => {
+                                print!("{}", content);
+                                stdout
+                                    .flush()
+                                    .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
+                            }
+                            Message::ToolCall { id, name, status } => {
+                                println!("\n🔧 Tool call: {} ({}): {}", id, name, status);
+                            }
+                            Message::Plan { entries } => {
+                                println!("\n📋 Plan update received: {:?}", entries);
+                            }
+                            Message::TaskFinish { .. } => {
+                                println!("\n✅ Task completed");
+                                break;
+                            }
+                            Message::Error {
+                                code,
+                                message: msg,
+                                details: _,
+                            } => {
+                                eprintln!("\n❌ Error {}: {}", code, msg);
+                                break;
+                            }
+                            Message::User { content } => {
+                                println!("\n👤 User message: {}", content);
+                            }
+                        }
+                    }
+
+                    Ok::<(), Box<dyn std::error::Error>>(())
+                });
+
+                // Send a message
+                let prompt = self.prompt.as_ref().unwrap();
+                println!("📤 Sending: {}", prompt);
+                
+                // Handle the send_message result to catch timeout errors
+                match client.send_message(prompt, None).await {
+                    Ok(()) => {
+                        println!("✅ Message sent successfully");
+                    }
+                    Err(IFlowError::Timeout(msg)) => {
+                        eprintln!("⏰ Timeout error occurred: {}", msg);
+                        eprintln!("This may be due to processing delays.");
+                        eprintln!("Consider increasing the timeout or checking the iFlow process.");
+                    }
+                    Err(e) => {
+                        eprintln!("❌ Error sending message: {}", e);
+                        return Err(e.into());
+                    }
+                }
+
+                // Wait for the message handling task to finish with a timeout
+                match tokio::time::timeout(
+                    std::time::Duration::from_secs_f64(custom_timeout_secs),
+                    message_task,
+                )
+                .await
+                {
+                    Ok(Ok(Ok(()))) => {
+                        println!("✅ Message handling completed successfully");
+                    }
+                    Ok(Ok(Err(err))) => {
+                        eprintln!("❌ Error in message handling: {}", err);
+                    }
+                    Ok(Err(err)) => {
+                        eprintln!("❌ Message task panicked: {}", err);
+                    }
+                    Err(_) => {
+                        println!("⏰ Timeout waiting for message handling to complete");
+                    }
+                }
+
+                // Disconnect
+                println!("\n🔌 Disconnecting...");
+                client.disconnect().await.map_err(|e| format!("Failed to disconnect: {}", e))?;
+                println!("👋 Disconnected from iFlow");
+
+                Ok::<(), Box<dyn std::error::Error>>(())
+            })
+            .await
+            .map_err(|e| format!("WebSocket client error: {}", e))?;
+            
+        Ok(())
+    }
 }
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), String> {
     let cli = Cli::parse();
     
     // Validate the arguments
@@ -174,6 +310,12 @@ fn main() {
     if let Err(e) = cli.configure() {
         eprintln!("Configuration Error: {}", e);
         std::process::exit(1);
+    }
+    
+    // Run WebSocket client if requested
+    if cli.use_websocket {
+        cli.run_websocket().await?;
+        return Ok(());
     }
     
     // Print the parsed arguments for verification
@@ -190,4 +332,7 @@ fn main() {
     println!("  gh_version: {:?}", cli.gh_version);
     println!("  iflow_version: {:?}", cli.iflow_version);
     println!("  use_env_vars: {}", cli.use_env_vars);
+    println!("  use_websocket: {}", cli.use_websocket);
+    
+    Ok(())
 }
