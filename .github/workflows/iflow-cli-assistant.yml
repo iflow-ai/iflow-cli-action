@@ -211,6 +211,7 @@ jobs:
           ISSUE_NUMBER: '${{ steps.get_context.outputs.issue_number }}'
           IS_PR: '${{ steps.get_context.outputs.is_pr }}'
         with:
+          precmd: "git config --global --add safe.directory /github/workspace"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "3600"
           debug: "true"
@@ -219,7 +220,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": " qwen3-coder-plus",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
