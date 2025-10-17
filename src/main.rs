@@ -625,11 +625,6 @@ async fn main() -> Result<(), String> {
     println!("  gh_version: {:?}", cli.gh_version);
     println!("  iflow_version: {:?}", cli.iflow_version);
     println!("  dry_run: {}", cli.dry_run);
-    
-    // If we're in GitHub Actions, print a notice
-    if is_github_actions {
-        println!("ℹ️  Running in GitHub Actions mode with WebSocket client enabled by default");
-    }
 
     Ok(())
 }

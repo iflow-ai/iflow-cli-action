@@ -56,9 +56,6 @@ pub fn generate_summary_markdown(
     // Add prompt section
     summary.push_str("### 📝 Input Prompt\n\n");
     let mut prompt = prompt_val.to_string();
-    if prompt.len() > 300 {
-        prompt = prompt[..300].to_string() + "...";
-    }
     // Escape any markdown characters in the prompt
     prompt = prompt.replace("`", "\\`");
     summary.push_str(&format!("> {}\n\n", prompt));
