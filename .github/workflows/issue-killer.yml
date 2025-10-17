@@ -70,7 +70,7 @@ jobs:
             core.setOutput('implementation_request', implementation_request);
 
       - name: 'Run iFlow CLI Implementation'
-        uses: ./
+        uses: iflow-ai/iflow-cli-action@v1.4.0
         id: 'iflow_cli_implementation'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -82,7 +82,7 @@ jobs:
           precmd: "ls -al"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "1800"
-          debug: "true"
+          extra_args: "--debug"
           settings_json: |
             {
                 "selectedAuthType": "iflow",
