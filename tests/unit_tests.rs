@@ -14,7 +14,7 @@ fn test_contains_code() {
     // We'll implement a simple version of contains_code for testing
     let contains_code = |text: &str| -> bool {
         let lower_text = text.to_lowercase();
-        for indicator in &code_indicators {
+        for indicator in code_indicators {
             if lower_text.contains(indicator) {
                 return true;
             }
@@ -63,7 +63,7 @@ fn test_generate_summary_markdown_success() {
     // We'll implement a simple version of contains_code for testing
     let contains_code = |text: &str| -> bool {
         let lower_text = text.to_lowercase();
-        for indicator in &code_indicators {
+        for indicator in code_indicators {
             if lower_text.contains(indicator) {
                 return true;
             }
@@ -169,7 +169,7 @@ fn test_generate_summary_markdown_success() {
             prompt = prompt[..300].to_string() + "...";
         }
         // Escape any markdown characters in the prompt
-        prompt = prompt.replace("`", "`");
+        prompt = prompt.replace("`", "\\`");
         summary.push_str(&format!("> {}
 
 ", prompt));
@@ -298,7 +298,7 @@ fn test_generate_summary_markdown_failure() {
     // We'll implement a simple version of contains_code for testing
     let contains_code = |text: &str| -> bool {
         let lower_text = text.to_lowercase();
-        for indicator in &code_indicators {
+        for indicator in code_indicators {
             if lower_text.contains(indicator) {
                 return true;
             }
@@ -401,7 +401,7 @@ fn test_generate_summary_markdown_failure() {
             prompt = prompt[..300].to_string() + "...";
         }
         // Escape any markdown characters in the prompt
-        prompt = prompt.replace("`", "`");
+        prompt = prompt.replace("`", "\\`");
         summary.push_str(&format!("> {}
 
 ", prompt));
@@ -531,7 +531,7 @@ fn test_generate_summary_markdown_timeout() {
     // We'll implement a simple version of contains_code for testing
     let contains_code = |text: &str| -> bool {
         let lower_text = text.to_lowercase();
-        for indicator in &code_indicators {
+        for indicator in code_indicators {
             if lower_text.contains(indicator) {
                 return true;
             }
@@ -634,7 +634,7 @@ fn test_generate_summary_markdown_timeout() {
             prompt = prompt[..300].to_string() + "...";
         }
         // Escape any markdown characters in the prompt
-        prompt = prompt.replace("`", "`");
+        prompt = prompt.replace("`", "\\`");
         summary.push_str(&format!("> {}
 
 ", prompt));
