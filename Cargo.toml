@@ -14,7 +14,7 @@ dirs = "5.0"
 tempfile = "3.23"
 # iFlow CLI SDK dependencies
 # iflow-cli-sdk-rust = { path = "./iflow-cli-sdk-rust" }
-iflow-cli-sdk-rust = { version = "0.1.1" }
+iflow-cli-sdk-rust = { version = "0.1.2" }
 tokio = { version = "1.48", features = ["full"] }
 futures = "0.3"
 tracing = "0.1"
