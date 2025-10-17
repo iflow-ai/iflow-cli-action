@@ -1,13 +1,15 @@
 
+// Shared code indicators array for tests
+const CODE_INDICATORS: [&str; 23] = [
+    "function", "class", "def ", "import ", "const ", "let ", "var ",
+    "public ", "private ", "protected", "return ", "if (", "for (", "while (",
+    "{", "}", ";", "//", "/*", "*/", "#include", "package ", "use ",
+];
 
 #[test]
 fn test_contains_code() {
     // Test cases that should be detected as code
-    let code_indicators = [
-        "function", "class", "def ", "import ", "const ", "let ", "var ",
-        "public ", "private ", "protected", "return ", "if (", "for (", "while (",
-        "{", "}", ";", "//", "/*", "*/", "#include", "package ", "use ",
-    ];
+    let code_indicators = &CODE_INDICATORS;
 
     // We'll implement a simple version of contains_code for testing
     let contains_code = |text: &str| -> bool {
