@@ -213,7 +213,7 @@ jobs:
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "3600"
-          extra_args: "--debug"
+          debug: "true"
           settings_json: |
             {
                 "selectedAuthType": "iflow",
@@ -223,16 +223,16 @@ jobs:
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
-                  "command": "github-mcp-server",
-                  "args": [
-                    "stdio"
-                  ],
-                  "includeTools": [
-                    "create_pending_pull_request_review",
-                    "add_comment_to_pending_review",
-                    "submit_pending_pull_request_review",
-                    "list_pull_requests"
-                  ],
+                    "command": "github-mcp-server",
+                    "args": [
+                      "stdio"
+                    ],
+                    "includeTools": [
+                      "create_pending_pull_request_review",
+                      "add_comment_to_pending_review",
+                      "submit_pending_pull_request_review",
+                      "list_pull_requests"
+                    ],
                     "env": {
                       "GITHUB_PERSONAL_ACCESS_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
                     }

@@ -383,14 +383,18 @@ impl Cli {
             .run_until(async {
                 // Configure client options with WebSocket configuration and custom timeout
                 let custom_timeout_secs = self.timeout as f64;
+                let mut process_config = iflow_cli_sdk_rust::types::ProcessConfig::new()
+                    .enable_auto_start()
+                    .start_port(8090);
+
+                if self.debug {
+                    process_config = process_config.enable_debug();
+                }
+
                 let options = IFlowOptions::new()
                     .with_websocket_config(iflow_cli_sdk_rust::types::WebSocketConfig::auto_start())
                     .with_timeout(custom_timeout_secs)
-                    .with_process_config(
-                        iflow_cli_sdk_rust::types::ProcessConfig::new()
-                            .enable_auto_start()
-                            .start_port(8090),
-                    );
+                    .with_process_config(process_config);
 
                 // Create and connect client
                 let mut client = IFlowClient::new(Some(options));
