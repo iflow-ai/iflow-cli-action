@@ -129,7 +129,7 @@ jobs:
             项目地址为：https://github.com/iflow-ai/iflow-cli-action
           api_key: ${{ secrets.IFLOW_API_KEY }}
           # settings_json: ${{ secrets.IFLOW_SETTINGS_JSON }}
-          model: "qwen3-coder-plus"
+          model: "glm-4.6"
           timeout: "1800"
           debug: "true"
 

@@ -1,10 +1,10 @@
 name: iFlow with MCP
 
 on:
-  workflow_run:
-    workflows: ["Build and Deploy Homepage"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["Build and Deploy Homepage"]
+  #   types:
+  #     - completed
   # Allow manual trigger
   workflow_dispatch:
   # Also run on pushes to main branch
