@@ -1,0 +1,44 @@
+name: Rust Coverage
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        run: cargo install cargo-llvm-cov --locked
+
+      - name: Generate coverage report
+        run: |
+          npx -v
+          npm install -g @iflow-ai/iflow-cli@latest
+          mkdir -p ~/.iflow
+          cat > ~/.iflow/settings.json <<'EOF'
+          ${{ secrets.CI_IFLOW_SETTINGS_JSON }}
+          EOF
+          RUST_LOG=debug cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info -- --nocapture
+        env:
+          RUSTFLAGS: "-C instrument-coverage"
+          RUST_LOG: debug
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./lcov.info
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
