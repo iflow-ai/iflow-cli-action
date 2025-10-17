@@ -425,10 +425,11 @@ impl Cli {
         // Add result section with better formatting
         summary.push_str("### Output\n\n");
         if exit_code == 0 {
-            let mut display_result = result.to_string();
-            if display_result.len() > 3000 {
-                display_result = display_result[..3000].to_string() + "\n\n... *(Output truncated. See full output in action logs)*";
-            }
+            let display_result = result.to_string();
+            // if display_result.chars().count() > 3000 {
+            //     display_result = display_result.chars().take(3000).collect::<String>()
+            //         + "\n\n... *(Output truncated. See full output in action logs)*";
+            // }
 
             // Check if result contains markdown or code blocks
             if result.contains("```") {
@@ -716,9 +717,6 @@ async fn main() -> Result<(), String> {
         cli.use_websocket = true;
     }
 
-    // Print version information
-    cli.print_version_info();
-
     // Validate the arguments
     if let Err(e) = cli.validate() {
         eprintln!("Validation Error: {}", e);
@@ -730,6 +728,9 @@ async fn main() -> Result<(), String> {
         eprintln!("Installation Error: {}", e);
         std::process::exit(1);
     }
+
+    // Print version information (after installing specific versions)
+    cli.print_version_info();
 
     // Configure iFlow settings
     if let Err(e) = cli.configure() {
