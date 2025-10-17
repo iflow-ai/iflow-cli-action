@@ -620,9 +620,9 @@ dependencies = [
 
 [[package]]
 name = "iflow-cli-sdk-rust"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f46da4ff03218e259d41a4bcc609696b18d28d716f2f7aaec241cff1aab87926"
+checksum = "a9dec43182c81e5bd783a0f16dd5a60cce4ddf017c26534a229c57260c7e89c2"
 dependencies = [
  "agent-client-protocol",
  "anyhow",
