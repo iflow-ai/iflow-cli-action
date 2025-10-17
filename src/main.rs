@@ -221,6 +221,176 @@ impl Cli {
         Ok(())
     }
 
+    /// Writes content to GitHub Actions step summary
+    pub fn write_step_summary(content: &str) -> Result<(), String> {
+        // Check if we're in GitHub Actions environment
+        if std::env::var("GITHUB_ACTIONS").is_err() {
+            // Not in GitHub Actions environment, nothing to do
+            return Ok(());
+        }
+
+        // Get the summary file path from environment variable
+        let summary_file = match std::env::var("GITHUB_STEP_SUMMARY") {
+            Ok(file) => file,
+            Err(_) => {
+                // Summary not supported or not available
+                return Ok(());
+            }
+        };
+
+        // Write content to the summary file
+        std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(&summary_file)
+            .map_err(|e| format!("failed to open step summary file: {}", e))
+            .and_then(|mut file| {
+                use std::io::Write;
+                file.write_all(content.as_bytes())
+                    .map_err(|e| format!("failed to write to step summary: {}", e))
+            })
+    }
+
+    /// Generates a comprehensive summary markdown
+    pub fn generate_summary_markdown(
+        result: &str,
+        exit_code: i32,
+        config: &std::collections::HashMap<&str, serde_json::Value>,
+    ) -> String {
+        let mut summary = String::new();
+
+        let is_timeout = config.get("isTimeout").and_then(|v| v.as_bool()).unwrap_or(false);
+        let timeout_val = config.get("timeout").and_then(|v| v.as_i64()).unwrap_or(3600) as i32;
+        let model_val = config.get("model").and_then(|v| v.as_str()).unwrap_or("Qwen3-Coder");
+        let base_url_val = config.get("baseURL").and_then(|v| v.as_str()).unwrap_or("https://apis.iflow.cn/v1");
+        let working_dir_val = config.get("workingDir").and_then(|v| v.as_str()).unwrap_or(".");
+        let extra_args_val = config.get("extraArgs").and_then(|v| v.as_str()).unwrap_or("");
+        let prompt_val = config.get("prompt").and_then(|v| v.as_str()).unwrap_or("");
+
+        // Add header with emoji based on status
+        if is_timeout {
+            summary.push_str("## ⏰ iFlow CLI Execution Summary - Timeout\n\n");
+        } else if exit_code == 0 {
+            summary.push_str("## ✅ iFlow CLI Execution Summary\n\n");
+        } else {
+            summary.push_str("## ❌ iFlow CLI Execution Summary\n\n");
+        }
+
+        // Add execution status with more detail
+        summary.push_str("### 📊 Status\n\n");
+        if is_timeout {
+            summary.push_str("⏰ **Execution**: Timed Out\n");
+            summary.push_str(&format!("🕒 **Timeout Duration**: {} seconds\n", timeout_val));
+            summary.push_str(&format!("💥 **Exit Code**: {}\n\n", exit_code));
+        } else if exit_code == 0 {
+            summary.push_str("🎉 **Execution**: Successful\n");
+            summary.push_str("🎯 **Exit Code**: 0\n\n");
+        } else {
+            summary.push_str("⚠️ **Execution**: Failed\n");
+            summary.push_str(&format!("💥 **Exit Code**: {}\n\n", exit_code));
+        }
+
+        // Add configuration details in a table format
+        summary.push_str("### ⚙️ Configuration\n\n");
+        summary.push_str("| Setting | Value |\n");
+        summary.push_str("|---------|-------|\n");
+        summary.push_str(&format!("| Model | `{}` |\n", model_val));
+        summary.push_str(&format!("| Base URL | `{}` |\n", base_url_val));
+        summary.push_str(&format!("| Timeout | {} seconds |\n", timeout_val));
+        summary.push_str(&format!("| Working Directory | `{}` |\n", working_dir_val));
+        if !extra_args_val.is_empty() {
+            summary.push_str(&format!("| Extra Arguments | `{}` |\n", extra_args_val));
+        }
+        summary.push_str("\n");
+
+        // Add prompt section
+        summary.push_str("### 📝 Input Prompt\n\n");
+        let mut prompt = prompt_val.to_string();
+        if prompt.len() > 300 {
+            prompt = prompt[..300].to_string() + "...";
+        }
+        // Escape any markdown characters in the prompt
+        prompt = prompt.replace("`", "\\`");
+        summary.push_str(&format!("> {}\n\n", prompt));
+
+        // Add result section with better formatting
+        summary.push_str("### Output\n\n");
+        if exit_code == 0 {
+            let mut display_result = result.to_string();
+            if display_result.len() > 3000 {
+                display_result = display_result[..3000].to_string() + "\n\n... *(Output truncated. See full output in action logs)*";
+            }
+
+            // Check if result contains markdown or code blocks
+            if result.contains("```") {
+                // Result already contains code blocks, display as-is
+                summary.push_str(&format!("{}\n\n", display_result));
+            } else if Self::contains_code(&display_result) {
+                // Result looks like code, wrap in code block
+                summary.push_str(&format!("```\n{}\n```\n\n", display_result));
+            } else {
+                // Regular text result, format as blockquote for readability
+                for line in display_result.lines() {
+                    if !line.trim().is_empty() {
+                        summary.push_str(&format!("> {}\n", line));
+                    } else {
+                        summary.push_str(">\n");
+                    }
+                }
+                summary.push_str("\n");
+            }
+        } else {
+            // Error output, always in code block
+            summary.push_str("```\n");
+            summary.push_str(result);
+            summary.push_str("\n```\n\n");
+
+            // Add troubleshooting hints for common errors
+            if is_timeout {
+                summary.push_str("#### ⏰ Timeout Information\n\n");
+                summary.push_str(&format!("- **Configured Timeout**: {} seconds\n", timeout_val));
+                summary.push_str("- **Reason**: The iFlow CLI command did not complete within the specified timeout period\n");
+                summary.push_str("- **Exit Code**: 124 (timeout)\n\n");
+
+                summary.push_str("#### 🔧 Timeout Troubleshooting\n\n");
+                summary.push_str("- **Increase timeout**: Consider increasing the timeout value if the task legitimately needs more time\n");
+                summary.push_str("- **Optimize prompt**: Try breaking down complex prompts into smaller, more focused requests\n");
+                summary.push_str("- **Check model performance**: Some models may require longer processing time\n");
+                summary.push_str("- **Network issues**: Verify network connectivity and API response times\n");
+                summary.push_str("- **Resource constraints**: Check if the system has sufficient resources (CPU, memory)\n\n");
+            } else if result.contains("API Error") {
+                summary.push_str("#### 🔧 Troubleshooting Hints\n\n");
+                summary.push_str("- Check if your API key is valid and active\n");
+                summary.push_str("- Verify the base URL is accessible\n");
+                summary.push_str("- Ensure the selected model is available\n");
+                summary.push_str("- Try increasing the timeout value\n\n");
+            }
+        }
+
+        // Add footer
+        summary.push_str("---\n");
+        summary.push_str("*🤖 Generated by [iFlow CLI Action](https://github.com/iflow-ai/iflow-cli-action)*\n\n");
+
+        summary
+    }
+
+    /// Detects if text looks like code
+    pub fn contains_code(text: &str) -> bool {
+        let code_indicators = [
+            "function", "class", "def ", "import ", "const ", "let ", "var ",
+            "public ", "private ", "protected", "return ", "if (", "for (", "while (",
+            "{", "}", ";", "//", "/*", "*/", "#include", "package ", "use ",
+        ];
+
+        let lower_text = text.to_lowercase();
+        for indicator in &code_indicators {
+            if lower_text.contains(indicator) {
+                return true;
+            }
+        }
+        false
+    }
+
     /// Run iFlow using WebSocket client
     async fn run_websocket(&self) -> Result<(), String> {
         use futures::stream::StreamExt;
@@ -276,19 +446,25 @@ impl Cli {
 
                 let message_task = tokio::task::spawn_local(async move {
                     let mut stdout = std::io::stdout();
+                    let mut collected_messages = String::new();
 
                     while let Some(message) = message_stream.next().await {
                         match message {
                             Message::Assistant { content } => {
                                 print!("🤖 Assistant: {}", content);
-                                stdout
-                                    .flush()
-                                    .map_err(|err| -> Box<dyn std::error::Error> {
-                                        Box::new(err)
-                                    })?;
+                                if let Err(err) = stdout.flush() {
+                                    eprintln!("❌ Error flushing stdout: {}", err);
+                                    break;
+                                }
+                                
+                                // Collect assistant messages for summary
+                                collected_messages.push_str(&format!("🤖 Assistant: {}", content));
                             }
                             Message::ToolCall { id, name, status } => {
                                 println!("\n🔧 Tool call: {} ({}): {:?}", id, name, status);
+                                
+                                // Collect tool call messages for summary
+                                collected_messages.push_str(&format!("\n🔧 Tool call: {} ({}): {:?}", id, name, status));
                             }
                             Message::Plan { entries } => {
                                 // Update plan entries
@@ -300,6 +476,7 @@ impl Cli {
                                 // Display all plan entries with status
                                 if !plan_entries.is_empty() {
                                     println!("\n📋 Plan:");
+                                    collected_messages.push_str("\n📋 Plan:");
                                     for (i, (content, status)) in plan_entries.iter().enumerate() {
                                         let status_icon = match status {
                                             iflow_cli_sdk_rust::types::PlanStatus::Pending => "⏳",
@@ -311,11 +488,13 @@ impl Cli {
                                             }
                                         };
                                         println!("  {}. {} {}", i + 1, status_icon, content);
+                                        collected_messages.push_str(&format!("\n  {}. {} {}", i + 1, status_icon, content));
                                     }
                                 }
                             }
                             Message::TaskFinish { .. } => {
                                 println!("\n✅ Task completed");
+                                collected_messages.push_str("\n✅ Task completed");
                                 break;
                             }
                             Message::Error {
@@ -324,15 +503,17 @@ impl Cli {
                                 details: _,
                             } => {
                                 eprintln!("\n❌ Error {}: {}", code, msg);
+                                collected_messages.push_str(&format!("\n❌ Error {}: {}", code, msg));
                                 break;
                             }
                             Message::User { content } => {
                                 println!("\n👤 User message: {}", content);
+                                collected_messages.push_str(&format!("\n👤 User message: {}", content));
                             }
                         }
                     }
 
-                    Ok::<(), Box<dyn std::error::Error>>(())
+                    collected_messages
                 });
 
                 // Send a message
@@ -351,30 +532,50 @@ impl Cli {
                     }
                     Err(e) => {
                         eprintln!("❌ Error sending message: {}", e);
-                        return Err(e.into());
+                        return Err(format!("{}", e));
                     }
                 }
 
                 // Wait for the message handling task to finish with a timeout
-                match tokio::time::timeout(
+                let message_result = match tokio::time::timeout(
                     std::time::Duration::from_secs_f64(custom_timeout_secs),
                     message_task,
                 )
                 .await
                 {
-                    Ok(Ok(Ok(()))) => {
+                    Ok(Ok(collected_messages)) => {
                         println!("✅ Message handling completed successfully");
-                    }
-                    Ok(Ok(Err(err))) => {
-                        eprintln!("❌ Error in message handling: {}", err);
+                        
+                        // Write collected messages to GitHub step summary if in GitHub Actions environment
+                        if std::env::var("GITHUB_ACTIONS").is_ok() {
+                            // Prepare configuration map for summary generation
+                            let mut config_map = std::collections::HashMap::new();
+                            config_map.insert("isTimeout", serde_json::Value::Bool(false));
+                            config_map.insert("timeout", serde_json::Value::Number(serde_json::Number::from(self.timeout)));
+                            config_map.insert("model", serde_json::Value::String(self.model.clone()));
+                            config_map.insert("baseURL", serde_json::Value::String(self.base_url.clone()));
+                            config_map.insert("workingDir", serde_json::Value::String(self.working_directory.clone()));
+                            config_map.insert("extraArgs", serde_json::Value::String(self.extra_args.clone().unwrap_or_default()));
+                            config_map.insert("prompt", serde_json::Value::String(prompt.clone()));
+
+                            // Generate and write summary
+                            let summary_content = Self::generate_summary_markdown(&collected_messages, 0, &config_map);
+                            if let Err(e) = Self::write_step_summary(&summary_content) {
+                                eprintln!("⚠️  Warning: Failed to write step summary: {}", e);
+                            }
+                        }
+                        
+                        Ok(())
                     }
                     Ok(Err(err)) => {
-                        eprintln!("❌ Message task panicked: {}", err);
+                        eprintln!("❌ Error in message handling: {}", err);
+                        Err(format!("Error in message handling: {}", err))
                     }
                     Err(_) => {
                         println!("⏰ Timeout waiting for message handling to complete");
+                        Err("Timeout waiting for message handling to complete".to_string())
                     }
-                }
+                };
 
                 // Disconnect
                 println!("\n🔌 Disconnecting...");
@@ -384,7 +585,7 @@ impl Cli {
                     .map_err(|e| format!("Failed to disconnect: {}", e))?;
                 println!("👋 Disconnected from iFlow");
 
-                Ok::<(), Box<dyn std::error::Error>>(())
+                message_result.map_err(|e| format!("WebSocket client error: {}", e))
             })
             .await
             .map_err(|e| format!("WebSocket client error: {}", e))?;
