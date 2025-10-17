@@ -279,6 +279,57 @@ impl Cli {
         Ok(())
     }
 
+    /// Installs specific versions of GitHub CLI and iFlow CLI if requested
+    fn install_specific_versions(&self) -> Result<(), String> {
+        // Install specific GitHub CLI version if requested
+        if let Some(ref gh_version) = self.gh_version {
+            if !gh_version.is_empty() {
+                println!("Installing GitHub CLI version: {}", gh_version);
+                
+                let install_cmd = format!(
+                    "curl -fsSL https://github.com/cli/cli/releases/download/v{0}/gh_{0}_linux_amd64.tar.gz | tar xz && cp gh_{0}_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_{0}_linux_amd64",
+                    gh_version
+                );
+                
+                let output = std::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(&install_cmd)
+                    .output()
+                    .map_err(|e| format!("failed to execute GitHub CLI installation command: {}", e))?;
+
+                if !output.status.success() {
+                    let error = String::from_utf8_lossy(&output.stderr);
+                    return Err(format!("failed to install GitHub CLI version {}: {}", gh_version, error));
+                }
+                
+                println!("✅ Successfully installed GitHub CLI version: {}", gh_version);
+            }
+        }
+
+        // Install specific iFlow CLI version if requested
+        if let Some(ref iflow_version) = self.iflow_version {
+            if !iflow_version.is_empty() {
+                println!("Installing iFlow CLI version: {}", iflow_version);
+                
+                let output = std::process::Command::new("npm")
+                    .arg("install")
+                    .arg("-g")
+                    .arg(format!("@iflow-ai/iflow-cli@{}", iflow_version))
+                    .output()
+                    .map_err(|e| format!("failed to execute iFlow CLI installation command: {}", e))?;
+
+                if !output.status.success() {
+                    let error = String::from_utf8_lossy(&output.stderr);
+                    return Err(format!("failed to install iFlow CLI version {}: {}", iflow_version, error));
+                }
+                
+                println!("✅ Successfully installed iFlow CLI version: {}", iflow_version);
+            }
+        }
+
+        Ok(())
+    }
+
     /// Writes content to GitHub Actions step summary
     pub fn write_step_summary(content: &str) -> Result<(), String> {
         // Check if we're in GitHub Actions environment
@@ -671,6 +722,12 @@ async fn main() -> Result<(), String> {
     // Validate the arguments
     if let Err(e) = cli.validate() {
         eprintln!("Validation Error: {}", e);
+        std::process::exit(1);
+    }
+
+    // Install specific versions if requested
+    if let Err(e) = cli.install_specific_versions() {
+        eprintln!("Installation Error: {}", e);
         std::process::exit(1);
     }
 
