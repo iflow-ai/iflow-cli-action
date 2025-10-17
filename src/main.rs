@@ -174,6 +174,53 @@ impl Cli {
             .map_err(|e| format!("failed to marshal settings: {}", e))
     }
 
+    /// Executes pre-command if specified
+    fn execute_precmd(&self) -> Result<(), String> {
+        if let Some(ref precmd) = self.precmd {
+            if !precmd.is_empty() {
+                // Split the precmd into lines and execute each line
+                let commands: Vec<&str> = precmd.split('\n').collect();
+
+                for command in commands {
+                    // Skip empty lines
+                    let command = command.trim();
+                    if command.is_empty() {
+                        continue;
+                    }
+
+                    println!("Executing pre-command: {}", command);
+
+                    // Create a command to execute the pre-command
+                    let output = std::process::Command::new("sh")
+                        .arg("-c")
+                        .arg(command)
+                        .current_dir(&self.working_directory)
+                        .output()
+                        .map_err(|e| format!("failed to execute pre-command '{}': {}", command, e))?;
+
+                    // Print stdout and stderr
+                    if !output.stdout.is_empty() {
+                        println!("{}", String::from_utf8_lossy(&output.stdout));
+                    }
+                    if !output.stderr.is_empty() {
+                        eprintln!("{}", String::from_utf8_lossy(&output.stderr));
+                    }
+
+                    // Check if command failed
+                    if !output.status.success() {
+                        return Err(format!(
+                            "pre-command '{}' failed with exit code: {:?}",
+                            command,
+                            output.status.code()
+                        ));
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+
     /// Run iFlow using WebSocket client
     async fn run_websocket(&self) -> Result<(), String> {
         use futures::stream::StreamExt;
@@ -368,6 +415,12 @@ async fn main() -> Result<(), String> {
     // Configure iFlow settings
     if let Err(e) = cli.configure() {
         eprintln!("Configuration Error: {}", e);
+        std::process::exit(1);
+    }
+
+    // Execute pre-command if specified
+    if let Err(e) = cli.execute_precmd() {
+        eprintln!("Pre-command Error: {}", e);
         std::process::exit(1);
     }
 
