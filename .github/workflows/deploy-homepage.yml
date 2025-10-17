@@ -42,6 +42,7 @@ jobs:
       - name: Generate homepage using iFlow CLI
         uses: ./
         with:
+          precmd: "ls -al"
           prompt: |
             请仅读取当前仓库的 README.md 文件内容（不要读取其他任何文件），将其转换为一个基于 Reveal.js 的精美幻灯片风格文档网站并保存为 _site/index.html。
             
@@ -128,9 +129,9 @@ jobs:
             项目地址为：https://github.com/iflow-ai/iflow-cli-action
           api_key: ${{ secrets.IFLOW_API_KEY }}
           # settings_json: ${{ secrets.IFLOW_SETTINGS_JSON }}
-          model: "kimi-k2-0905"
+          model: " qwen3-coder-plus"
           timeout: "1800"
-          extra_args: "--debug"
+          debug: "true"
 
       - name: Verify reveal.js presentation was generated
         run: |

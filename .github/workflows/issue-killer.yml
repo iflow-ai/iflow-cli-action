@@ -79,6 +79,7 @@ jobs:
           ISSUE_NUMBER: '${{ steps.get_issue.outputs.issue_number }}'
           REPOSITORY: '${{ github.repository }}'
         with:
+          precmd: "ls -al"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "1800"
           debug: "true"
@@ -87,7 +88,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
