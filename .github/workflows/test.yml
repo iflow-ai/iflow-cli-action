@@ -1,56 +1,44 @@
-name: Tests
+name: Rust Coverage
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "*"
-    paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
   pull_request:
     paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
-  e2e-tests:
+  coverage:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Install Rust
-      uses: actions-rs/toolchain@master
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
-    
-    - name: Cache Cargo registry
-      uses: actions/cache@v4
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-    
-    - name: Cache Cargo index
-      uses: actions/cache@v4
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-    
-    - name: Cache Cargo build
-      uses: actions/cache@v4
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
-    
-    - name: Run tests
-      run: |
-        npx -v
-        npm install -g @iflow-ai/iflow-cli@latest
-        mkdir -p ~/.iflow
-        cat > ~/.iflow/settings.json <<'EOF'
-        ${{ secrets.IFLOW_SETTINGS_JSON }}
-        EOF
-        iflow --version
-        RUST_LOG=debug cargo test -- --nocapture
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        run: cargo install cargo-llvm-cov --locked
+
+      - name: Generate coverage report
+        run: |
+          npx -v
+          npm install -g @iflow-ai/iflow-cli@latest
+          mkdir -p ~/.iflow
+          cat > ~/.iflow/settings.json <<'EOF'
+          ${{ secrets.CI_IFLOW_SETTINGS_JSON }}
+          EOF
+          RUST_LOG=debug cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info -- --nocapture
+        env:
+          RUSTFLAGS: "-C instrument-coverage"
+          RUST_LOG: debug
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./lcov.info
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
