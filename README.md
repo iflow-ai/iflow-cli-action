@@ -57,7 +57,7 @@ A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/
 - ✅ Support for custom models and API endpoints
 - ✅ Flexible command execution with timeout control
 - ✅ Works in any working directory
-- ✅ Built with Go for fast, reliable execution
+- ✅ Built with Rust for fast, reliable execution
 - ✅ **GitHub Actions Summary integration**: Rich execution reports in PR summaries
 - ✅ PR/Issue Integration: Works seamlessly with GitHub comments and PR reviews
 
