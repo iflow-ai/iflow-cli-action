@@ -487,9 +487,9 @@ impl Cli {
                     collected_messages
                 });
 
-                // Send a message
+                // Send a prompt message
                 let prompt = self.prompt.as_ref().unwrap();
-                println!("📤 User prompt: {}", prompt);
+                // println!("📤 User prompt: {}", prompt);
 
                 // Handle the send_message result to catch timeout errors
                 match client.send_message(prompt, None).await {
