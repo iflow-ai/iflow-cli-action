@@ -79,7 +79,7 @@ jobs:
           ISSUE_NUMBER: '${{ steps.get_issue.outputs.issue_number }}'
           REPOSITORY: '${{ github.repository }}'
         with:
-          precmd: "ls -al"
+          precmd: "git config --global --add safe.directory /github/workspace"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "1800"
           extra_args: "--debug"
