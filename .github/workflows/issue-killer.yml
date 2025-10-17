@@ -30,7 +30,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (
         github.event_name == 'issue_comment' &&
-        contains(github.event.comment.body, '@iflow-cli /issue-killer') &&
+        contains(github.event.comment.body, '@iflow-cli-issue-killer') &&
         contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
       )
     runs-on: 'ubuntu-latest'
@@ -61,7 +61,7 @@ jobs:
             // Parse implementation request from comment or use issue body
             let implementation_request = issue.data.body;
             if (context.eventName === 'issue_comment') {
-              implementation_request = context.payload.comment.body.replace('@iflow-cli /issue-killer', '').trim();
+              implementation_request = context.payload.comment.body.replace('@iflow-cli-issue-killer', '').trim();
               if (implementation_request === '') {
                 implementation_request = issue.data.body;
               }
