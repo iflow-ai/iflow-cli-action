@@ -67,17 +67,13 @@ struct Cli {
     #[clap(long, env = "INPUT_IFLOW_VERSION")]
     iflow_version: Option<String>,
 
-    /// Use environment variables for configuration (GitHub Actions mode)
-    #[clap(long, env = "USE_ENV_VARS")]
-    use_env_vars: bool,
-
     /// Path to the settings file (for testing purposes)
     #[clap(long, env = "SETTINGS_FILE_PATH")]
     settings_file_path: Option<String>,
 
-    /// Use WebSocket client instead of CLI
-    #[clap(long, env = "USE_WEBSOCKET")]
-    use_websocket: bool,
+    /// Dry run mode for E2E testing (skips actual execution)
+    #[clap(long, env = "DRY_RUN")]
+    dry_run: bool,
 }
 
 impl Cli {
@@ -710,12 +706,7 @@ async fn main() -> Result<(), String> {
     let is_github_actions = env::var("GITHUB_ACTIONS").is_ok();
     
     // Parse CLI arguments
-    let mut cli = Cli::parse();
-    
-    // If we're in GitHub Actions, enable websocket by default
-    if is_github_actions && !cli.use_websocket {
-        cli.use_websocket = true;
-    }
+    let cli = Cli::parse();
 
     // Validate the arguments
     if let Err(e) = cli.validate() {
@@ -744,8 +735,13 @@ async fn main() -> Result<(), String> {
         std::process::exit(1);
     }
 
-    // Run WebSocket client if requested
-    if cli.use_websocket {
+    // Run WebSocket client in GitHub Actions environment or when explicitly requested
+    if is_github_actions {
+        // Skip actual execution in dry-run mode
+        if cli.dry_run {
+            println!("DRY RUN: Would execute run_websocket()");
+            return Ok(());
+        }
         cli.run_websocket().await?;
         return Ok(());
     }
@@ -763,11 +759,10 @@ async fn main() -> Result<(), String> {
     println!("  precmd: {:?}", cli.precmd);
     println!("  gh_version: {:?}", cli.gh_version);
     println!("  iflow_version: {:?}", cli.iflow_version);
-    println!("  use_env_vars: {}", cli.use_env_vars);
-    println!("  use_websocket: {}", cli.use_websocket);
+    println!("  dry_run: {}", cli.dry_run);
     
-    // If we're in GitHub Actions and using WebSocket, print a notice
-    if is_github_actions && cli.use_websocket {
+    // If we're in GitHub Actions, print a notice
+    if is_github_actions {
         println!("ℹ️  Running in GitHub Actions mode with WebSocket client enabled by default");
     }
 

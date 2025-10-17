@@ -22,6 +22,7 @@ fn test_basic_configuration_with_api_key() {
             "test prompt",
             "--api-key",
             "test-api-key",
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -65,6 +66,7 @@ fn test_configuration_with_settings_json() {
             "test prompt",
             "--settings-json",
             r#"{"theme":"Default","selectedAuthType":"iflow","apiKey":"test-key","baseUrl":"https://apis.iflow.cn/v1","modelName":"Qwen3-Coder","searchApiKey":"test-key"}"#,
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -110,6 +112,7 @@ fn test_configuration_with_multiline_settings_json() {
             "test prompt",
             "--settings-json",
             r#"{"theme":"Default","selectedAuthType":"iflow","apiKey":"test-key","baseUrl":"https://apis.iflow.cn/v1","modelName":"Qwen3-Coder","searchApiKey":"test-key","customField":"value\nwith\nnewlines"}"#,
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -150,6 +153,7 @@ fn test_validation_error_missing_prompt() {
             "--",
             "--api-key",
             "test-api-key",
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -186,6 +190,7 @@ fn test_validation_error_missing_api_key_and_settings_json() {
             "--",
             "--prompt",
             "test prompt",
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -224,6 +229,7 @@ fn test_validation_error_invalid_settings_json() {
             "test prompt",
             "--settings-json",
             r#"{"invalid": json}"#,
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -267,6 +273,7 @@ fn test_precmd_execution() {
             "test-api-key",
             "--precmd",
             &format!("echo 'precmd executed' > {}", test_file.to_str().unwrap()),
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -321,6 +328,7 @@ fn test_precmd_execution_multiple_commands() {
             "test-api-key",
             "--precmd",
             &precmd,
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -369,6 +377,7 @@ fn test_precmd_execution_fails() {
             "test-api-key",
             "--precmd",
             "exit 1", // This command will fail
+            "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
         ])
@@ -384,4 +393,48 @@ fn test_precmd_execution_fails() {
     // Check the error message
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(stderr.contains("Pre-command Error: pre-command 'exit 1' failed with exit code: Some(1)"));
+}
+
+#[test]
+fn test_dry_run_mode() {
+    // Create a temporary directory for testing
+    let temp_dir = tempfile::Builder::new()
+        .prefix("iflow_cli_test")
+        .tempdir()
+        .expect("Failed to create temporary directory");
+
+    let temp_path = temp_dir.path();
+    let settings_file = temp_path.join("settings.json");
+
+    let output = Command::new("cargo")
+        .env("GITHUB_ACTIONS", "true") // Enable GitHub Actions mode to force WebSocket usage
+        .args([
+            "run",
+            "--bin",
+            "iflow-cli-action",
+            "--",
+            "--prompt",
+            "test prompt",
+            "--api-key",
+            "test-api-key",
+            "--dry-run",
+            "--settings-file-path",
+            settings_file.to_str().unwrap(),
+        ])
+        .output()
+        .expect("Failed to execute test");
+
+    // Check that the command succeeded
+    assert!(
+        output.status.success(),
+        "Command failed with stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    // Check that settings file was created
+    assert!(settings_file.exists(), "Settings file was not created");
+
+    // Check that dry run message was printed
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("DRY RUN: Would execute run_websocket()"));
 }
