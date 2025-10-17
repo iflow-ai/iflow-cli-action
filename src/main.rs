@@ -394,7 +394,8 @@ impl Cli {
                 let options = IFlowOptions::new()
                     .with_websocket_config(iflow_cli_sdk_rust::types::WebSocketConfig::auto_start())
                     .with_timeout(custom_timeout_secs)
-                    .with_process_config(process_config);
+                    .with_process_config(process_config)
+                    .with_permission_mode(iflow_cli_sdk_rust::types::PermissionMode::Auto);
 
                 // Create and connect client
                 let mut client = IFlowClient::new(Some(options));
