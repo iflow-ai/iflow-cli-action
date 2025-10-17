@@ -174,6 +174,64 @@ impl Cli {
             .map_err(|e| format!("failed to marshal settings: {}", e))
     }
 
+    /// Gets the version of a command by running it with --version flag
+    fn get_command_version(command: &str) -> Result<String, String> {
+        let output = std::process::Command::new(command)
+            .arg("--version")
+            .output()
+            .map_err(|e| format!("failed to execute {} --version: {}", command, e))?;
+
+        if output.status.success() {
+            let version = String::from_utf8_lossy(&output.stdout);
+            Ok(version.trim().to_string())
+        } else {
+            let error = String::from_utf8_lossy(&output.stderr);
+            Err(format!("failed to get {} version: {}", command, error))
+        }
+    }
+
+    /// Prints version information as GitHub Actions annotations
+    fn print_version_info(&self) {
+        // Check if we're in GitHub Actions environment
+        let is_github_actions = std::env::var("GITHUB_ACTIONS").is_ok();
+
+        // Print iFlow CLI version
+        match Self::get_command_version("iflow") {
+            Ok(version) => {
+                if is_github_actions {
+                    println!("::notice::iFlow CLI version: {}", version);
+                } else {
+                    println!("INFO: iFlow CLI version: {}", version);
+                }
+            }
+            Err(e) => {
+                if is_github_actions {
+                    println!("::warning::Failed to get iFlow CLI version: {}", e);
+                } else {
+                    eprintln!("WARNING: Failed to get iFlow CLI version: {}", e);
+                }
+            }
+        }
+
+        // Print GitHub CLI version
+        match Self::get_command_version("gh") {
+            Ok(version) => {
+                if is_github_actions {
+                    println!("::notice::GitHub CLI version: {}", version);
+                } else {
+                    println!("INFO: GitHub CLI version: {}", version);
+                }
+            }
+            Err(e) => {
+                if is_github_actions {
+                    println!("::warning::Failed to get GitHub CLI version: {}", e);
+                } else {
+                    eprintln!("WARNING: Failed to get GitHub CLI version: {}", e);
+                }
+            }
+        }
+    }
+
     /// Executes pre-command if specified
     fn execute_precmd(&self) -> Result<(), String> {
         if let Some(ref precmd) = self.precmd {
@@ -606,6 +664,9 @@ async fn main() -> Result<(), String> {
     if is_github_actions && !cli.use_websocket {
         cli.use_websocket = true;
     }
+
+    // Print version information
+    cli.print_version_info();
 
     // Validate the arguments
     if let Err(e) = cli.validate() {
