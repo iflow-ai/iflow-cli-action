@@ -507,3 +507,35 @@ fn test_github_actions_outputs_written() {
         content
     );
 }
+
+// This test only runs on GitHub Actions. Locally it will be skipped.
+#[test]
+fn test_only_on_github_actions() {
+    // If not running in GitHub Actions, skip the test by returning early.
+    if std::env::var("GITHUB_ACTIONS").ok().as_deref() != Some("true") {
+        eprintln!("Skipping test_only_on_github_actions: not running in GitHub Actions");
+        return;
+    }
+
+    let api_key = std::env::var("CI_IFLOW_API_KEY").expect("IFLOW_API_KEY not set in GitHub Actions");
+    let output = Command::new("cargo")
+        .args([
+            "run",
+            "--bin",
+            "iflow-cli-action",
+            "--",
+            "--prompt",
+            "what time is it now?",
+            "--api-key",
+            api_key.as_str()
+        ])
+        .output()
+        .expect("Failed to execute test");
+    println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+    println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+    assert!(
+        output.status.success(),
+        "Command failed with stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
