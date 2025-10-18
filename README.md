@@ -36,12 +36,6 @@
 - [Contributing](#contributing)
 - [License](#license)
 - [Related](#related)
-- [Documentation Tools](#documentation-tools)
-  - [Table of Contents Generator](#table-of-contents-generator)
-    - [Usage](#usage)
-    - [Configuration](#configuration)
-    - [Default Ignores](#default-ignores)
-    - [Integration with GitHub Actions](#integration-with-github-actions)
 <!-- TOC end -->
 
 A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/iflow-cli) commands within your GitHub workflows. This Docker-based action comes with Node.js 22, npm, and uv (ultra-fast Python package manager) pre-installed for optimal performance, and executes your specified commands using the iFlow CLI.

@@ -6,8 +6,8 @@ use std::fs;
 /// iFlow CLI Action wrapper
 #[derive(Parser, Debug)]
 #[clap(
-    name = "iflow-action",
-    version = "0.1.0",
+    name = "iflow-cli-action",
+    version = "2.0.0",
     about = "A GitHub Action ACP CLI for iFlow CLI that provides intelligent code assistance.",
     long_about = r#"A GitHub Action ACP CLI for iFlow CLI that provides intelligent code assistance.
 
@@ -419,7 +419,7 @@ impl Cli {
         let summary_holder = std::sync::Arc::new(std::sync::Mutex::new(None::<String>));
 
         // Initialize logging with environment variable support
-        let log_level = if self.debug {
+        let log_level = if self.debug || env::var("ACTIONS_STEP_DEBUG").is_ok() {
             tracing::Level::DEBUG
         } else {
             tracing::Level::INFO
