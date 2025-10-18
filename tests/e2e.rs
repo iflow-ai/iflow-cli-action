@@ -517,7 +517,8 @@ fn test_only_on_github_actions() {
         return;
     }
 
-    let api_key = std::env::var("CI_IFLOW_API_KEY").expect("IFLOW_API_KEY not set in GitHub Actions");
+    let api_key =
+        std::env::var("CI_IFLOW_API_KEY").expect("IFLOW_API_KEY not set in GitHub Actions");
     let output = Command::new("cargo")
         .args([
             "run",
@@ -527,7 +528,7 @@ fn test_only_on_github_actions() {
             "--prompt",
             "what time is it now?",
             "--api-key",
-            api_key.as_str()
+            api_key.as_str(),
         ])
         .output()
         .expect("Failed to execute test");
