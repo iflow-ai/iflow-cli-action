@@ -57,7 +57,7 @@ A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/
 - ✅ Support for custom models and API endpoints
 - ✅ Flexible command execution with timeout control
 - ✅ Works in any working directory
-- ✅ Built with Go for fast, reliable execution
+- ✅ Built with Rust for fast, reliable execution
 - ✅ **GitHub Actions Summary integration**: Rich execution reports in PR summaries
 - ✅ PR/Issue Integration: Works seamlessly with GitHub comments and PR reviews
 
@@ -204,11 +204,11 @@ jobs:
 
 ### Available Models
 
-[Models](https://platform.iflow.cn/docs/api-mode)
+[Models](https://platform.iflow.cn/models)
 
 - `Qwen3-Coder` (default) - Excellent for code analysis and generation
-- `Kimi-K2` - Good for general AI tasks and longer contexts
-- `DeepSeek-V3` - Advanced reasoning and problem-solving
+- `kimi-k2-0905` - Good for general AI tasks and longer contexts
+- `glm-4.6` - Advanced reasoning and problem-solving
 - Custom models supported via OpenAI-compatible APIs
 
 ## Custom Configuration

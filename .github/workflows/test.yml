@@ -34,6 +34,7 @@ jobs:
         env:
           RUSTFLAGS: "-C instrument-coverage"
           RUST_LOG: debug
+          CI_IFLOW_API_KEY: ${{ secrets.CI_IFLOW_API_KEY }}
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5

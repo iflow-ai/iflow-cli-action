@@ -4,7 +4,7 @@ This file provides comprehensive guidance for iFlow CLI when working with code i
 
 ## Project Overview
 
-This repository is a production-ready GitHub Action that wraps the iFlow CLI, enabling users to run intelligent code analysis and automation commands within GitHub workflows. The action is built with Go and packaged in a multi-stage Docker container that includes Node.js 24, uv (ultra-fast Python package manager), GitHub CLI, and the iFlow CLI.
+This repository is a production-ready GitHub Action that wraps the iFlow CLI, enabling users to run intelligent code analysis and automation commands within GitHub workflows. The action is built with Rust and packaged in a multi-stage Docker container that includes Node.js 24, uv (ultra-fast Python package manager), GitHub CLI, and the iFlow CLI.
 
 ### Key Capabilities
 
@@ -12,7 +12,7 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 - **Workflow Automation**: Automate GitHub issues, PR reviews, and project management tasks
 - **Flexible Configuration**: Support for both CLI flags and GitHub Actions environment variables
 - **Rich Reporting**: Generate detailed execution summaries with GitHub Actions integration
-- **Multi-language Support**: Pre-configured environment for Go, Python, Node.js, and more
+- **Multi-language Support**: Pre-configured environment for Rust, Python, Node.js, and more
 - **Version Management**: Configurable versions for GitHub CLI and iFlow CLI
 
 ## Architecture
@@ -20,13 +20,13 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 ### Core Components
 
 1. **Entry Points**:
-   - `main.go`: Minimal entry point that delegates to Cobra command structure
-   - `cmd/root.go`: Comprehensive command implementation with full feature set
+   - `src/main.rs`: Main entry point that uses Clap for command-line argument parsing
+   - `src/lib.rs`: Library code for generating GitHub Actions summaries
 
 2. **Docker Infrastructure**:
    - **Multi-stage build**: Optimized for size and performance
    - **Ubuntu 22.04 base**: Production-ready with security updates
-   - **Pre-installed tools**: Node.js 24, npm, uv, GitHub CLI, Go 1.24.7, xmake
+   - **Pre-installed tools**: Node.js 24, npm, uv, GitHub CLI, Rust 1.90, xmake
    - **Non-root user**: Runs as `iflow` user for security
 
 3. **GitHub Actions Integration**:
@@ -50,36 +50,33 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 ### Building
 
 ```bash
-# Build the Go binary locally
-go build -o iflow-action .
+# Build the Rust binary locally
+cargo build --release
 
 # Build Docker image for testing
 docker build -t iflow-cli-action .
 
-# Build with specific Go version
-go build -ldflags="-s -w" -o iflow-action .
+# Build with specific Rust version
+cargo build --release
 
 # Build with release optimizations
-go build -trimpath -ldflags="-s -w -X main.version=$(git describe --tags --always)" -o iflow-action .
+cargo build --release
 ```
 
 ### Testing
 
 ```bash
-# Run all Go tests
-go test ./...
+# Run all Rust tests
+cargo test
 
 # Run tests with verbose output
-go test -v ./...
+cargo test --verbose
 
 # Run specific test
-go test -v ./cmd/...
+cargo test test_name
 
 # Run tests with coverage
-go test -cover ./...
-
-# Run tests with race detection
-go test -race ./...
+cargo tarpaulin
 ```
 
 ### Running
@@ -88,35 +85,35 @@ go test -race ./...
 
 ```bash
 # Basic execution
-./iflow-action --prompt "Analyze this code" --api-key YOUR_API_KEY
+./target/release/iflow-cli-action --prompt "Analyze this code" --api-key YOUR_API_KEY
 
 # With custom model and timeout
-./iflow-action --prompt "Review this PR" --api-key YOUR_API_KEY --model "Qwen3-Coder" --timeout 1800
+./target/release/iflow-cli-action --prompt "Review this PR" --api-key YOUR_API_KEY --model "Qwen3-Coder" --timeout 1800
 
 # With pre-execution commands
-./iflow-action --prompt "Generate docs" --api-key YOUR_API_KEY --precmd "npm install && npm run build"
+./target/release/iflow-cli-action --prompt "Generate docs" --api-key YOUR_API_KEY --precmd "npm install && npm run build"
 
 # With extra arguments
-./iflow-action --prompt "Analyze code" --api-key YOUR_API_KEY --extra-args "--verbose --format json"
+./target/release/iflow-cli-action --prompt "Analyze code" --api-key YOUR_API_KEY --extra-args "--verbose --format json"
 
 # With specific versions
-./iflow-action --prompt "Test" --api-key YOUR_API_KEY --gh-version "2.76.2" --iflow-version "0.2.4"
+./target/release/iflow-cli-action --prompt "Test" --api-key YOUR_API_KEY --gh-version "2.76.2" --iflow-version "0.2.4"
 ```
 
 #### GitHub Actions Mode
 
 ```bash
 # Test with environment variables
-INPUT_PROMPT="Analyze this code" INPUT_API_KEY=your-key ./iflow-action --use-env-vars=true
+INPUT_PROMPT="Analyze this code" INPUT_API_KEY=your-key ./target/release/iflow-cli-action
 
 # With pre-execution setup
-INPUT_PROMPT="Run tests" INPUT_API_KEY=your-key INPUT_PRECMD="npm ci" ./iflow-action --use-env-vars=true
+INPUT_PROMPT="Run tests" INPUT_API_KEY=your-key INPUT_PRECMD="npm ci" ./target/release/iflow-cli-action
 
 # With custom settings JSON
-INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"your-key"}' ./iflow-action --use-env-vars=true
+INPUT_SETTINGS_JSON='{"theme":"Default","selectedAuthType":"iflow","apiKey":"your-key"}' ./target/release/iflow-cli-action
 
 # With version specifications
-INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW_VERSION="0.2.4" ./iflow-action --use-env-vars=true
+INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW_VERSION="0.2.4" ./target/release/iflow-cli-action
 ```
 
 ## Code Structure
@@ -158,10 +155,11 @@ INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW
 | `model` | string | `Qwen3-Coder` | Model name to use |
 | `working_directory` | string | `.` | Working directory to run from |
 | `timeout` | int | `3600` | Timeout in seconds (1-86400) |
-| `extra_args` | string | - | Additional CLI arguments for iFlow |
 | `precmd` | string | - | Shell commands to run before iFlow |
 | `gh_version` | string | - | Version of GitHub CLI to install (e.g., "2.76.2") |
 | `iflow_version` | string | - | Version of iFlow CLI to install (e.g., "0.2.4") |
+| `debug` | boolean | `false` | Enable debug logging |
+| `dry_run` | boolean | `false` | Dry run mode for E2E testing |
 
 ### Output Variables
 
@@ -184,17 +182,6 @@ Execute shell commands before running iFlow CLI:
       npm install
       npm run build
       echo "Environment ready"
-```
-
-### Extra Arguments (`extra_args`)
-
-Pass additional arguments to iFlow CLI:
-
-```yaml
-- uses: iflow-ai/iflow-cli-action@main
-  with:
-    prompt: "Review code"
-    extra_args: "--verbose --format markdown --max-tokens 2000"
 ```
 
 ### Custom Settings JSON
@@ -232,23 +219,21 @@ Specify exact versions for GitHub CLI and iFlow CLI:
 
 ### Adding New Configuration Options
 
-1. **Add CLI flag** in `cmd/root.go` init function
-2. **Update Config struct** with new field in `internal/config/config.go`
-3. **Add environment variable support** in `LoadFromEnv` method
-4. **Update action.yml** with new input definition
-5. **Add validation logic** in `Validate` method
-6. **Update documentation** in README files
+1. **Add CLI flag** in `src/main.rs` using Clap attributes
+2. **Update validation logic** in the `validate` method
+3. **Update action.yml** with new input definition
+4. **Update documentation** in README files
 
 ### Modifying iFlow Execution
 
-1. **Update `executeIFlow`** function in `internal/iflow/client.go` for command changes
-2. **Modify argument parsing** in `parseExtraArgs` if needed
+1. **Update execution logic** in `src/main.rs` for command changes
+2. **Modify argument parsing** if needed
 3. **Update output handling** in execution functions
 4. **Test with various scenarios** (success, timeout, error)
 
 ### Enhancing GitHub Summary Output
 
-1. **Update `generateSummaryMarkdown`** function in `internal/github/actions.go`
+1. **Update `generate_summary_markdown`** function in `src/lib.rs`
 2. **Add new sections** for metrics or troubleshooting
 3. **Improve formatting** with better Markdown structure
 4. **Add emoji indicators** for better visual feedback
@@ -265,21 +250,21 @@ Specify exact versions for GitHub CLI and iFlow CLI:
 
 ### Local Testing
 
-#### Go Binary Testing
+#### Rust Binary Testing
 
 ```bash
 # Build and test
-go build -o iflow-action
-./iflow-action --prompt "Test prompt" --api-key test-key --use-env-vars=false
+cargo build --release
+./target/release/iflow-cli-action --prompt "Test prompt" --api-key test-key
 
 # Test with timeout
-./iflow-action --prompt "Long running task" --api-key test-key --timeout 60
+./target/release/iflow-cli-action --prompt "Long running task" --api-key test-key --timeout 60
 
 # Test pre-execution commands
-./iflow-action --prompt "Test" --api-key test-key --precmd "echo 'Setup complete'"
+./target/release/iflow-cli-action --prompt "Test" --api-key test-key --precmd "echo 'Setup complete'"
 
 # Test version specifications
-./iflow-action --prompt "Test" --api-key test-key --gh-version "2.76.2" --iflow-version "0.2.4"
+./target/release/iflow-cli-action --prompt "Test" --api-key test-key --gh-version "2.76.2" --iflow-version "0.2.4"
 ```
 
 #### Docker Testing
@@ -370,7 +355,6 @@ The repository includes several example workflows:
     precmd: |
       npm install
       npm run build
-    extra_args: "--verbose --format markdown"
     gh_version: "2.76.2"
     iflow_version: "0.2.4"
 
@@ -423,7 +407,7 @@ Enable verbose logging by setting environment variables:
 export INPUT_PROMPT="Debug test"
 export INPUT_API_KEY="your-key"
 export GITHUB_ACTIONS="true"  # Simulate GitHub Actions
-./iflow-action --use-env-vars=true
+./target/release/iflow-cli-action
 
 # With specific versions for testing
 export INPUT_GH_VERSION="2.76.2"
@@ -435,7 +419,6 @@ export INPUT_IFLOW_VERSION="0.2.4"
 - **Timeout tuning**: Start with shorter timeouts, increase as needed
 - **Model selection**: Choose appropriate model for task complexity
 - **Pre-execution optimization**: Cache dependencies when possible
-- **Output handling**: Use `extra_args` to limit output size
 - **Version management**: Use compatible tool versions
 
 ### Security Considerations
