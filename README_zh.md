@@ -1,4 +1,6 @@
-# 🤖 iFlow CLI GitHub Action
+# ![iflow-icon-ai](./assets/icon.png) iFlow CLI GitHub Action
+
+![GitHub License](https://img.shields.io/github/license/iflow-ai/iflow-cli-action) [![iFlow with MCP](https://github.com/iflow-ai/iflow-cli-action/actions/workflows/iflow-with-mcp.yml/badge.svg)](https://github.com/iflow-ai/iflow-cli-action/actions/workflows/iflow-with-mcp.yml) [![codecov](https://codecov.io/gh/vibe-ideas/iflow-cli-action/graph/badge.svg?token=d7IGlAGhlN)](https://codecov.io/gh/vibe-ideas/iflow-cli-action) ![GitHub Release](https://img.shields.io/github/v/release/iflow-ai/iflow-cli-action)
 
 <!-- TOC start -->
 ## Table of Contents
@@ -16,7 +18,9 @@
     - [附加参数示例](#附加参数示例)
   - [使用预执行命令](#使用预执行命令)
     - [多行命令](#多行命令)
+    - [带引号的参数](#带引号的参数)
   - [使用自定义设置](#使用自定义设置)
+  - [使用自定义工具版本](#使用自定义工具版本)
 - [使用 MCP 服务器](#使用-mcp-服务器)
   - [示例：使用 DeepWiki MCP 服务器](#示例使用-deepwiki-mcp-服务器)
   - [何时使用 MCP 服务器](#何时使用-mcp-服务器)
@@ -41,16 +45,20 @@
 
 - [English Docs](README.md)
 
+> Docs Site (generated with iFlow CLI GitHub Action): [https://iflow-ai.github.io/iflow-cli-action/](https://iflow-ai.github.io/iflow-cli-action/)
+
 > 文档站点（使用 iFlow CLI GitHub Action 生成）：[https://iflow-ai.github.io/iflow-cli-action/](https://iflow-ai.github.io/iflow-cli-action/)
 
 ## 功能特性
 
-- ✅ 基于 Docker 的操作，预装 Node.js 22、npm 和 uv
+- ✅ 基于 Docker 的操作，预装 Node.js 22、npm、go、cargo 和 uv
 - ✅ 可配置的 iFlow API 认证
+- ✅ 支持 MCP 服务器
+- ✅ **Agent Client Protocol**: 使用 [Rust ACP Websocket client](https://crates.io/crates/iflow-cli-sdk-rust) 与 iFlow CLI 通信
 - ✅ 支持自定义模型和 API 端点
 - ✅ 灵活的命令执行和超时控制
 - ✅ 可在任何工作目录中运行
-- ✅ 使用 Go 构建，快速可靠
+- ✅ 使用 Rust 构建，快速可靠
 - ✅ **GitHub Actions 摘要集成**：在 PR 摘要中提供丰富的执行报告
 - ✅ PR/问题集成：与 GitHub 评论和 PR 审查无缝协作
 
@@ -174,6 +182,8 @@ jobs:
 | `working_directory` | 运行 iFlow CLI 的工作目录 | ❌ 否 | `.` |
 | `timeout` | iFlow CLI 执行超时时间（秒）（1-86400） | ❌ 否 | `86400` |
 | `precmd` | 在运行 iFlow CLI 之前执行的 Shell 命令（例如 "npm install", "git fetch"） | ❌ 否 | `` |
+| `gh_version` | 要安装的 GitHub CLI 版本（例如 "2.76.2"）。如果未指定，则使用预安装的版本。 | ❌ 否 | `` |
+| `iflow_version` | 要安装的 iFlow CLI 版本（例如 "0.2.4"）。如果未指定，则使用预安装的版本。 | ❌ 否 | `` |
 
 ## 输出参数
 
@@ -226,6 +236,32 @@ precmd: |
   npm ci
   npm run build
 ```
+
+#### 带引号的参数
+
+当您的参数包含空格或特殊字符时，请使用引号：
+
+```yaml
+precmd: |
+  echo "Setting up environment"
+  npm run build -- --output-path="dist folder"
+```
+
+### 使用自定义工具版本
+
+您可以指定在工作流中使用的 GitHub CLI 和 iFlow CLI 的自定义版本：
+
+```yaml
+- name: 使用自定义版本的 iFlow CLI
+  uses: iflow-ai/iflow-cli-action@v2.0.0
+  with:
+    prompt: "使用特定工具版本分析此代码库"
+    api_key: ${{ secrets.IFLOW_API_KEY }}
+    gh_version: "2.76.2"
+    iflow_version: "0.2.4"
+```
+
+当您需要确保与这些工具的特定版本兼容或想要使用仅在某些版本中可用的功能时，这非常有用。
 
 ### 使用自定义设置
 
@@ -378,3 +414,4 @@ env:
 - [iFlow 平台](https://docs.iflow.cn/en/docs) - 官方文档
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
 - [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli)
+- [iFlow CLI SDK for Rust](https://crates.io/crates/iflow-cli-sdk-rust)

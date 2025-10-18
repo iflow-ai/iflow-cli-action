@@ -14,8 +14,6 @@
   - [Getting an iFlow API Key](#getting-an-iflow-api-key)
   - [Available Models](#available-models)
 - [Custom Configuration](#custom-configuration)
-  - [Using Extra Arguments](#using-extra-arguments)
-    - [Examples of Extra Arguments](#examples-of-extra-arguments)
   - [Using Pre-Execution Commands](#using-pre-execution-commands)
     - [Multi-line Commands](#multi-line-commands)
     - [Quoted Arguments](#quoted-arguments)

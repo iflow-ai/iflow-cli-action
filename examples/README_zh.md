@@ -469,32 +469,6 @@ jobs:
           timeout: "600"
 ```
 
-### 使用额外参数
-
-```yaml
-# .github/workflows/custom-args.yml
-name: 带自定义参数的 iFlow
-on:
-  workflow_dispatch:
-    inputs:
-      extra_flags:
-        description: '额外的 iFlow CLI 标志'
-        required: false
-        default: ''
-
-jobs:
-  custom:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: 使用自定义参数运行 iFlow
-        uses: iflow-ai/iflow-cli-action@v2.0.0
-        with:
-          prompt: "分析代码库并提供见解"
-          api_key: ${{ secrets.IFLOW_API_KEY }}
-          debug: "true"
-```
-
 ### 安全分析
 
 ```yaml
@@ -532,14 +506,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: 项目概述
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
           prompt: "/init"
           api_key: ${{ secrets.IFLOW_API_KEY }}
         id: init
-      
+
       - name: 架构分析
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
@@ -547,7 +521,7 @@ jobs:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           model: "Qwen3-Coder"
         id: arch
-      
+
       - name: 性能审查
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
@@ -555,7 +529,7 @@ jobs:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           model: "DeepSeek-V3"
         id: perf
-      
+
       - name: 创建摘要报告
         run: |
           echo "# 全面分析报告" > analysis-report.md
@@ -563,7 +537,7 @@ jobs:
           echo "${{ steps.arch.outputs.result }}" >> analysis-report.md
           echo "## 性能分析" >> analysis-report.md
           echo "${{ steps.perf.outputs.result }}" >> analysis-report.md
-      
+
       - name: 上传报告
         uses: actions/upload-artifact@v4
         with:
@@ -663,16 +637,16 @@ jobs:
           script: |
             const issue_number = process.env.INPUT_ISSUE_NUMBER || context.issue.number;
             core.setOutput('issue_number', issue_number);
-            
+
             const issue = await github.rest.issues.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: parseInt(issue_number)
             });
-            
+
             core.setOutput('issue_title', issue.data.title);
             core.setOutput('issue_body', issue.data.body);
-            
+
             // 从评论或使用问题正文解析实现请求
             let implementation_request = issue.data.body;
             if (context.eventName === 'issue_comment') {
@@ -681,7 +655,7 @@ jobs:
                 implementation_request = issue.data.body;
               }
             }
-            
+
             core.setOutput('implementation_request', implementation_request);
 
       - name: '运行 iFlow CLI 实现'
@@ -758,18 +732,18 @@ jobs:
             - 确保新代码遵循现有项目约定
             - 如适用，添加或修改测试
             - 以 "${VAR}"（带引号和大括号）的形式引用所有 shell 变量
-            
+
             ## 创建拉取请求
-            
+
             一旦你实现了功能，请使用 GitHub MCP 工具创建一个拉取请求：
             1. 使用 create_pull_request 创建一个拉取请求。
             2. 拉取请求应从一个具有描述性名称的新分支创建（例如，feature/issue-${ISSUE_NUMBER}、fix/issue-${ISSUE_NUMBER} 或基于功能的描述性名称）
             3. 拉取请求标题应具有描述性并引用问题编号
             4. 拉取请求正文应解释实现了什么并引用问题
             5. 记住你创建的分支名称，因为如果 PR 创建失败，完成评论中将需要它
-            
+
             ## 创建完成评论
-            
+
             成功实现功能并创建 PR 后，使用 GitHub MCP 工具在问题上添加一个完成评论：
             1. 使用 add_issue_comment 向问题 #${ISSUE_NUMBER} 添加评论
             2. 评论应包括：
@@ -945,7 +919,7 @@ jobs:
       - name: 检出 PR 分支
         uses: xt0rted/pull-request-comment-branch@v3.0.0
         id: checkout_pr
-        
+
       - name: 从评论中提取指令
         id: extract
         run: |
@@ -1029,18 +1003,18 @@ jobs:
             - 确保新代码遵循现有项目约定
             - 如适用，添加或修改测试
             - 以 "${VAR}"（带引号和大括号）的形式引用所有 shell 变量
-            
+
             ## 创建拉取请求
-            
+
             一旦你实现了更改，请使用 GitHub MCP 工具创建一个拉取请求：
             1. 使用 create_pull_request 创建一个拉取请求。
             2. 拉取请求应从一个具有描述性名称的新分支创建（例如，feature/pr-${{ github.event.issue.number }}、fix/pr-${{ github.event.issue.number }} 或基于更改的描述性名称）
             3. 拉取请求标题应具有描述性并引用 PR 编号
             4. 拉取请求正文应解释实现了什么并引用原始 PR
             5. 记住你创建的分支名称，因为如果 PR 创建失败，完成评论中将需要它
-            
+
             ## 创建完成评论
-            
+
             成功实现更改并创建 PR 后，使用 GitHub MCP 工具在原始 PR 上添加一个完成评论：
             1. 使用 add_issue_comment 向原始 PR 添加评论
             2. 评论应包括：
