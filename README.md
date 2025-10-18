@@ -52,8 +52,10 @@ A GitHub Action that enables you to run [iFlow CLI](https://github.com/iflow-ai/
 
 ## Features
 
-- ✅ Docker-based action with pre-installed Node.js 22, npm, and uv
+- ✅ Docker-based action with pre-installed Node.js 22, npm, go, cargo, and uv
 - ✅ Configurable authentication with iFlow API
+- ✅ Support for MCP servers
+- ✅ **Agent Client Protocol**: use [Rust ACP Websocket client](https://crates.io/crates/iflow-cli-sdk-rust) to communicate with iFlow CLI
 - ✅ Support for custom models and API endpoints
 - ✅ Flexible command execution with timeout control
 - ✅ Works in any working directory
@@ -425,3 +427,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [iFlow Platform](https://docs.iflow.cn/en/docs) - Official documentation
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli)
+- [iFlow CLI SDK for Rust](https://crates.io/crates/iflow-cli-sdk-rust)

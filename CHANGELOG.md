@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Rust Implementation**: Complete rewrite of the action in Rust for better performance and reliability
 - **iFlow CLI SDK**: Integrated official iFlow CLI SDK for Rust
+- **Agent Client Protocol**: use Rust ACP Websocket client to communicate with iFlow CLI
 - **Enhanced Error Handling**: Improved error handling and reporting with better diagnostics
 - **Structured Logging**: Added structured logging with tracing for better debugging
 - **Async Support**: Full async/await support for better performance
@@ -63,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed {#removed-1}
 
 - **Go Implementation**: Removed all Go code and dependencies
-- **Legacy APIs**: Removed deprecated APIs and functions
+- **Legacy**: Removed deprecated `extra_args` inputs
 
 ## [1.4.0] - 2025-09-05 {#140---2025-09-05}
 
