@@ -70,7 +70,7 @@ jobs:
             core.setOutput('implementation_request', implementation_request);
 
       - name: 'Run iFlow CLI Implementation'
-        uses: iflow-ai/iflow-cli-action@v1.4.0
+        uses: iflow-ai/iflow-cli-action@v2.0.0
         id: 'iflow_cli_implementation'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -82,7 +82,7 @@ jobs:
           precmd: "git config --global --add safe.directory /github/workspace"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "1800"
-          extra_args: "--debug"
+          debug: "true"
           settings_json: |
             {
                 "selectedAuthType": "iflow",

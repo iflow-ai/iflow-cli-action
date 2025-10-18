@@ -12,11 +12,11 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Run with verbose output
-        uses: iflow-ai/iflow-cli-action@v1.4.0
+        uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
           prompt: "Analyze this codebase"
           api_key: ${{ secrets.IFLOW_API_KEY }}
-          extra_args: "--debug"
+          debug: "true"
 
   # Example 2: Multiple flags
   multiple_flags:
@@ -25,11 +25,11 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Run with multiple custom flags
-        uses: iflow-ai/iflow-cli-action@v1.4.0
+        uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
           prompt: "Generate unit tests for the main functions"
           api_key: ${{ secrets.IFLOW_API_KEY }}
-          extra_args: "--debug --checkpointing"
+          debug: "true"
 
 
 

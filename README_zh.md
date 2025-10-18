@@ -108,7 +108,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: '运行 iFlow CLI 问题分类'
-        uses: iflow-ai/iflow-cli-action@v1.4.0
+        uses: iflow-ai/iflow-cli-action@v2.0.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -119,7 +119,7 @@ jobs:
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "3600"
-          extra_args: "--debug"
+          debug: "true"
           prompt: |
             ## 角色
 
@@ -174,7 +174,6 @@ jobs:
 | `model` | 要使用的模型名称 | ❌ 否 | `Qwen3-Coder` |
 | `working_directory` | 运行 iFlow CLI 的工作目录 | ❌ 否 | `.` |
 | `timeout` | iFlow CLI 执行超时时间（秒）（1-86400） | ❌ 否 | `86400` |
-| `extra_args` | 传递给 iFlow CLI 的附加命令行参数（空格分隔的字符串） | ❌ 否 | `` |
 | `precmd` | 在运行 iFlow CLI 之前执行的 Shell 命令（例如 "npm install", "git fetch"） | ❌ 否 | `` |
 
 ## 输出参数
@@ -204,30 +203,13 @@ jobs:
 
 ## 自定义配置
 
-### 使用附加参数
-
-`extra_args` 输入允许您直接向 iFlow CLI 传递附加的命令行参数。这提供了灵活性，可以使用未作为专用操作输入公开的高级 iFlow CLI 功能。
-
-```yaml
-- name: 带自定义参数的 iFlow
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "使用调试输出分析此代码库"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    extra_args: "--debug --max-tokens 3000"
-```
-
-#### 附加参数示例
-
-- `--debug` - 启用 iFLOW CLI 调试模式
-
 ### 使用预执行命令
 
 `precmd` 输入允许您在执行 iFlow CLI 之前运行 Shell 命令。这对于设置环境或安装 iFlow 命令所需的依赖项非常有用。
 
 ```yaml
 - name: 带预执行命令的 iFlow
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "在安装依赖项后分析此代码库"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -246,21 +228,13 @@ precmd: |
   npm run build
 ```
 
-#### 带引号的参数
-
-对于包含空格的参数，请使用引号：
-
-```yaml
-extra_args: '--debug'
-```
-
 ### 使用自定义设置
 
 对于需要完全控制 iFlow 配置的高级用户，您可以直接提供自定义的 `settings.json`：
 
 ```yaml
 - name: 自定义 iFlow 配置
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "使用自定义配置分析此代码库"
     api_key: ${{ secrets.IFLOW_API_KEY }}  # 仍需要用于基本验证
@@ -295,7 +269,7 @@ extra_args: '--debug'
 
 ```yaml
 - name: 带 MCP 服务器的 iFlow CLI
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "使用 @deepwiki 搜索如何使用 Skynet 构建游戏"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -315,7 +289,7 @@ extra_args: '--debug'
       }
     model: "Qwen3-Coder"
     timeout: "1800"
-    extra_args: "--debug"
+    debug: "true"
 ```
 
 在此示例中：

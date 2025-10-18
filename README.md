@@ -116,7 +116,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'Run iFlow CLI Issue Triage'
-        uses: iflow-ai/iflow-cli-action@v1.4.0
+        uses: iflow-ai/iflow-cli-action@v2.0.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -127,7 +127,7 @@ jobs:
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "3600"
-          extra_args: "--debug"
+          debug: "true"
           prompt: |
             ## Role
 
@@ -183,7 +183,6 @@ jobs:
 | `model` | Model name to use | ❌ No | `Qwen3-Coder` |
 | `working_directory` | Working directory to run iFlow CLI from | ❌ No | `.` |
 | `timeout` | Timeout for iFlow CLI execution in seconds (1-86400) | ❌ No | `86400` |
-| `extra_args` | Additional command line arguments to pass to iFlow CLI (space-separated string) | ❌ No | `` |
 | `precmd` | Shell command(s) to execute before running iFlow CLI (e.g., "npm install", "git fetch") | ❌ No | `` |
 | `gh_version` | Version of GitHub CLI to install (e.g., "2.76.2"). If not specified, uses the pre-installed version. | ❌ No | `` |
 | `iflow_version` | Version of iFlow CLI to install (e.g., "0.2.4"). If not specified, uses the pre-installed version. | ❌ No | `` |
@@ -215,30 +214,13 @@ jobs:
 
 ## Custom Configuration
 
-### Using Extra Arguments
-
-The `extra_args` input allows you to pass additional command-line arguments directly to the iFlow CLI. This provides flexibility to use advanced iFlow CLI features that aren't exposed as dedicated action inputs.
-
-```yaml
-- name: iFlow with Custom Arguments
-  uses: iflow-ai/iflow-cli-action@v1.4.0
-  with:
-    prompt: "Analyze this codebase with debug output"
-    api_key: ${{ secrets.IFLOW_API_KEY }}
-    extra_args: "--debug --max-tokens 3000"
-```
-
-#### Examples of Extra Arguments
-
-- `--debug` - Enable iFLOW CLI debug mode  
-
 ### Using Pre-Execution Commands
 
 The `precmd` input allows you to run shell commands before executing the iFlow CLI. This is useful for setting up the environment or installing dependencies needed for your iFlow commands.
 
 ```yaml
 - name: iFlow with Pre-Execution Commands
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "Analyze this codebase after installing dependencies"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -257,21 +239,13 @@ precmd: |
   npm run build
 ```
 
-#### Quoted Arguments
-
-For arguments containing spaces, use quotes:
-
-```yaml
-extra_args: '--debug'
-```
-
 ### Using Custom Settings
 
 For advanced users who need complete control over the iFlow configuration, you can provide a custom `settings.json` directly:
 
 ```yaml
 - name: Custom iFlow Configuration
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "Analyze this codebase with custom configuration"
     api_key: ${{ secrets.IFLOW_API_KEY }}  # Still required for basic validation
@@ -302,7 +276,7 @@ You can specify custom versions of GitHub CLI and iFlow CLI to use in your workf
 
 ```yaml
 - name: iFlow CLI with Custom Versions
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "Analyze this codebase with specific tool versions"
     api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -342,7 +316,7 @@ The following example demonstrates how to configure and use the DeepWiki MCP ser
       }
     model: "Qwen3-Coder"
     timeout: "1800"
-    extra_args: "--debug"
+    debug: "true"
 ```
 
 In this example:
