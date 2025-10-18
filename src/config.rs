@@ -247,16 +247,11 @@ impl Cli {
                                 collected_messages.push_str(&format!("🤖 Assistant: {}", content));
                             }
                             Message::ToolCall { id, name, status } => {
-                                println!(
-                                    "
-🔧 Tool call: {} ({}) {:?}",
-                                    id, name, status
-                                );
+                                println!("🔧 Tool call: {} ({}) {:?}", id, name, status);
 
                                 // Collect tool call messages for summary
                                 collected_messages.push_str(&format!(
-                                    "
-🔧 Tool call: {} ({}) {:?}",
+                                    "🔧 Tool call: {} ({}) {:?}",
                                     id, name, status
                                 ));
                             }
@@ -269,14 +264,8 @@ impl Cli {
 
                                 // Display all plan entries with status
                                 if !plan_entries.is_empty() {
-                                    println!(
-                                        "
-📋 Plan:"
-                                    );
-                                    collected_messages.push_str(
-                                        "
-📋 Plan:",
-                                    );
+                                    println!("📋 Plan:");
+                                    collected_messages.push_str("📋 Plan:");
                                     for (i, (content, status)) in plan_entries.iter().enumerate() {
                                         let status_icon = match status {
                                             iflow_cli_sdk_rust::types::PlanStatus::Pending => "⏳",
@@ -289,8 +278,7 @@ impl Cli {
                                         };
                                         println!("  {}. {} {}", i + 1, status_icon, content);
                                         collected_messages.push_str(&format!(
-                                            "
-  {}. {} {}",
+                                            "{}. {} {}",
                                             i + 1,
                                             status_icon,
                                             content
@@ -299,14 +287,8 @@ impl Cli {
                                 }
                             }
                             Message::TaskFinish { .. } => {
-                                println!(
-                                    "
-✅ Task completed"
-                                );
-                                collected_messages.push_str(
-                                    "
-✅ Task completed",
-                                );
+                                println!("✅ Task completed");
+                                collected_messages.push_str("✅ Task completed");
                                 break;
                             }
                             Message::Error {
@@ -314,29 +296,14 @@ impl Cli {
                                 message: msg,
                                 details: _,
                             } => {
-                                eprintln!(
-                                    "
-❌ Error {}: {}",
-                                    code, msg
-                                );
-                                collected_messages.push_str(&format!(
-                                    "
-❌ Error {}: {}",
-                                    code, msg
-                                ));
+                                eprintln!("❌ Error {}: {}", code, msg);
+                                collected_messages.push_str(&format!("❌ Error {}: {}", code, msg));
                                 break;
                             }
                             Message::User { content } => {
-                                println!(
-                                    "
-👤 User message: {}",
-                                    content
-                                );
-                                collected_messages.push_str(&format!(
-                                    "
-👤 User message: {}",
-                                    content
-                                ));
+                                println!("👤 User message: {}", content);
+                                collected_messages
+                                    .push_str(&format!("👤 User message: {}", content));
                             }
                         }
                     }
@@ -351,10 +318,7 @@ impl Cli {
                 // Handle the send_message result to catch timeout errors
                 match client.send_message(prompt, None).await {
                     Ok(()) => {
-                        println!(
-                            "
-✅ Prompt message sent successfully"
-                        );
+                        println!("✅ Prompt message sent successfully");
                     }
                     Err(IFlowError::Timeout(msg)) => {
                         eprintln!("⏰ Timeout error occurred: {}", msg);
@@ -423,10 +387,7 @@ impl Cli {
                 };
 
                 // Disconnect
-                println!(
-                    "
-🔌 Disconnecting..."
-                );
+                println!("🔌 Disconnecting...");
                 client
                     .disconnect()
                     .await
