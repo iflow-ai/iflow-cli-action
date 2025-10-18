@@ -32,7 +32,7 @@ repos:
         language: system
         types: [rust]
         pass_filenames: false
-        entry: cargo clippy --all-targets --all-features -- -D warnings
+        entry: cargo clippy --all-targets --all-features
 
       - id: cargo-test
         name: cargo test

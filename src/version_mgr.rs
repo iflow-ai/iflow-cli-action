@@ -64,61 +64,61 @@ pub fn install_specific_versions(
     iflow_version: &Option<String>,
 ) -> Result<(), String> {
     // Install specific GitHub CLI version if requested
-    if let Some(gh_version) = gh_version {
-        if !gh_version.is_empty() {
-            println!("Installing GitHub CLI version: {}", gh_version);
+    if let Some(gh_version) = gh_version
+        && !gh_version.is_empty()
+    {
+        println!("Installing GitHub CLI version: {}", gh_version);
 
-            let install_cmd = format!(
-                "curl -fsSL https://github.com/cli/cli/releases/download/v{0}/gh_{0}_linux_amd64.tar.gz | tar xz && cp gh_{0}_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_{0}_linux_amd64",
-                gh_version
-            );
+        let install_cmd = format!(
+            "curl -fsSL https://github.com/cli/cli/releases/download/v{0}/gh_{0}_linux_amd64.tar.gz | tar xz && cp gh_{0}_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_{0}_linux_amd64",
+            gh_version
+        );
 
-            let output = std::process::Command::new("sh")
-                .arg("-c")
-                .arg(&install_cmd)
-                .output()
-                .map_err(|e| format!("failed to execute GitHub CLI installation command: {}", e))?;
+        let output = std::process::Command::new("sh")
+            .arg("-c")
+            .arg(&install_cmd)
+            .output()
+            .map_err(|e| format!("failed to execute GitHub CLI installation command: {}", e))?;
 
-            if !output.status.success() {
-                let error = String::from_utf8_lossy(&output.stderr);
-                return Err(format!(
-                    "failed to install GitHub CLI version {}: {}",
-                    gh_version, error
-                ));
-            }
-
-            println!(
-                "✅ Successfully installed GitHub CLI version: {}",
-                gh_version
-            );
+        if !output.status.success() {
+            let error = String::from_utf8_lossy(&output.stderr);
+            return Err(format!(
+                "failed to install GitHub CLI version {}: {}",
+                gh_version, error
+            ));
         }
+
+        println!(
+            "✅ Successfully installed GitHub CLI version: {}",
+            gh_version
+        );
     }
 
     // Install specific iFlow CLI version if requested
-    if let Some(iflow_version) = iflow_version {
-        if !iflow_version.is_empty() {
-            println!("Installing iFlow CLI version: {}", iflow_version);
+    if let Some(iflow_version) = iflow_version
+        && !iflow_version.is_empty()
+    {
+        println!("Installing iFlow CLI version: {}", iflow_version);
 
-            let output = std::process::Command::new("npm")
-                .arg("install")
-                .arg("-g")
-                .arg(format!("@iflow-ai/iflow-cli@{}", iflow_version))
-                .output()
-                .map_err(|e| format!("failed to execute iFlow CLI installation command: {}", e))?;
+        let output = std::process::Command::new("npm")
+            .arg("install")
+            .arg("-g")
+            .arg(format!("@iflow-ai/iflow-cli@{}", iflow_version))
+            .output()
+            .map_err(|e| format!("failed to execute iFlow CLI installation command: {}", e))?;
 
-            if !output.status.success() {
-                let error = String::from_utf8_lossy(&output.stderr);
-                return Err(format!(
-                    "failed to install iFlow CLI version {}: {}",
-                    iflow_version, error
-                ));
-            }
-
-            println!(
-                "✅ Successfully installed iFlow CLI version: {}",
-                iflow_version
-            );
+        if !output.status.success() {
+            let error = String::from_utf8_lossy(&output.stderr);
+            return Err(format!(
+                "failed to install iFlow CLI version {}: {}",
+                iflow_version, error
+            ));
         }
+
+        println!(
+            "✅ Successfully installed iFlow CLI version: {}",
+            iflow_version
+        );
     }
 
     Ok(())

@@ -131,7 +131,7 @@ pub fn generate_summary_markdown(
     summary.push_str(&format!("| Base URL | `{}` |\n", base_url_val));
     summary.push_str(&format!("| Timeout | {} seconds |\n", timeout_val));
     summary.push_str(&format!("| Working Directory | `{}` |\n", working_dir_val));
-    summary.push_str("\n");
+    summary.push('\n');
 
     // Add prompt section
     summary.push_str("### 📝 Input Prompt\n\n");
@@ -165,7 +165,7 @@ pub fn generate_summary_markdown(
                     summary.push_str(">\n");
                 }
             }
-            summary.push_str("\n");
+            summary.push('\n');
         }
     } else {
         // Error output, always in code block

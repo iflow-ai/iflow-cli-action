@@ -92,11 +92,11 @@ impl Cli {
         }
 
         // Validate settings_json if provided
-        if let Some(ref settings_json) = self.settings_json {
-            if !settings_json.is_empty() {
-                serde_json::from_str::<serde_json::Value>(settings_json)
-                    .map_err(|e| format!("invalid settings_json provided: {}", e))?;
-            }
+        if let Some(ref settings_json) = self.settings_json
+            && !settings_json.is_empty()
+        {
+            serde_json::from_str::<serde_json::Value>(settings_json)
+                .map_err(|e| format!("invalid settings_json provided: {}", e))?;
         }
 
         Ok(())
@@ -398,10 +398,10 @@ impl Cli {
                             generate_summary_markdown(&collected_messages, 0, &config_map);
 
                         // Write collected messages to GitHub step summary if in GitHub Actions environment
-                        if std::env::var("GITHUB_ACTIONS").is_ok() {
-                            if let Err(e) = write_step_summary(&summary_content) {
-                                eprintln!("⚠️  Warning: Failed to write step summary: {}", e);
-                            }
+                        if std::env::var("GITHUB_ACTIONS").is_ok()
+                            && let Err(e) = write_step_summary(&summary_content)
+                        {
+                            eprintln!("⚠️  Warning: Failed to write step summary: {}", e);
                         }
 
                         // Store the generated summary into the shared holder so the outer
