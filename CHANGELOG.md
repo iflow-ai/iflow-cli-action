@@ -6,6 +6,10 @@
 - [[Unreleased] {#unreleased}](#unreleased-unreleased)
   - [Added {#added-1}](#added-added-1)
   - [Changed {#changed-1}](#changed-changed-1)
+- [[2.0.0] - 2025-10-18 {#200---2025-10-18}](#200-2025-10-18-200-2025-10-18)
+  - [Added {#added-1}](#added-added-1)
+  - [Changed {#changed-1}](#changed-changed-1)
+  - [Removed {#removed-1}](#removed-removed-1)
 - [[1.4.0] - 2025-09-05 {#140---2025-09-05}](#140-2025-09-05-140-2025-09-05)
   - [Added {#added-2}](#added-added-2)
   - [Changed {#changed-2}](#changed-changed-2)
@@ -35,6 +39,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added {#added-1}
 
 ### Changed {#changed-1}
+
+## [2.0.0] - 2025-10-18 {#200---2025-10-18}
+
+### Added {#added-1}
+
+- **Rust Implementation**: Complete rewrite of the action in Rust for better performance and reliability
+- **iFlow CLI SDK**: Integrated official iFlow CLI SDK for Rust
+- **Enhanced Error Handling**: Improved error handling and reporting with better diagnostics
+- **Structured Logging**: Added structured logging with tracing for better debugging
+- **Async Support**: Full async/await support for better performance
+- **Comprehensive Testing**: Added extensive unit and end-to-end tests
+
+### Changed {#changed-1}
+
+- **Architecture**: Migrated from Go to Rust implementation
+- **Docker Image**: Updated Docker image with Rust toolchain and dependencies
+- **Configuration**: Improved configuration handling with better validation
+- **Command Execution**: Enhanced command execution with better process management
+- **GitHub Actions Integration**: Improved GitHub Actions outputs and summaries
+- **Documentation**: Updated all documentation to reflect the new Rust implementation
+
+### Removed {#removed-1}
+
+- **Go Implementation**: Removed all Go code and dependencies
+- **Legacy APIs**: Removed deprecated APIs and functions
 
 ## [1.4.0] - 2025-09-05 {#140---2025-09-05}
 
