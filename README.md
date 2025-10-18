@@ -16,7 +16,6 @@
 - [Custom Configuration](#custom-configuration)
   - [Using Pre-Execution Commands](#using-pre-execution-commands)
     - [Multi-line Commands](#multi-line-commands)
-    - [Quoted Arguments](#quoted-arguments)
   - [Using Custom Settings](#using-custom-settings)
   - [Using Custom Tool Versions](#using-custom-tool-versions)
   - [Using MCP Servers](#using-mcp-servers)
