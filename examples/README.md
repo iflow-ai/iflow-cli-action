@@ -6,7 +6,6 @@
 - [Basic Examples](#basic-examples)
   - [Code Review on Pull Request](#code-review-on-pull-request)
   - [Documentation Generation](#documentation-generation)
-  - [Using Extra Arguments](#using-extra-arguments)
   - [Security Analysis](#security-analysis)
 - [Advanced Examples](#advanced-examples)
   - [Multi-step Analysis](#multi-step-analysis)
@@ -518,32 +517,6 @@ jobs:
           timeout: "600"
 ```
 
-### Using Extra Arguments
-
-```yaml
-# .github/workflows/custom-args.yml
-name: iFlow with Custom Arguments
-on:
-  workflow_dispatch:
-    inputs:
-      extra_flags:
-        description: 'Additional iFlow CLI flags'
-        required: false
-        default: ''
-
-jobs:
-  custom:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run iFlow with Custom Args
-        uses: iflow-ai/iflow-cli-action@v2.0.0
-        with:
-          prompt: "Analyze the codebase and provide insights"
-          api_key: ${{ secrets.IFLOW_API_KEY }}
-          debug: "true"
-```
-
 ### Security Analysis
 
 ```yaml
@@ -581,14 +554,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Project Overview
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
           prompt: "/init"
           api_key: ${{ secrets.IFLOW_API_KEY }}
         id: init
-      
+
       - name: Architecture Analysis
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
@@ -596,7 +569,7 @@ jobs:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           model: "Qwen3-Coder"
         id: arch
-      
+
       - name: Performance Review
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
@@ -604,7 +577,7 @@ jobs:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           model: "DeepSeek-V3"
         id: perf
-      
+
       - name: Create Summary Report
         run: |
           echo "# Comprehensive Analysis Report" > analysis-report.md
@@ -612,7 +585,7 @@ jobs:
           echo "${{ steps.arch.outputs.result }}" >> analysis-report.md
           echo "## Performance Analysis" >> analysis-report.md
           echo "${{ steps.perf.outputs.result }}" >> analysis-report.md
-      
+
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
@@ -712,16 +685,16 @@ jobs:
           script: |
             const issue_number = process.env.INPUT_ISSUE_NUMBER || context.issue.number;
             core.setOutput('issue_number', issue_number);
-            
+
             const issue = await github.rest.issues.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: parseInt(issue_number)
             });
-            
+
             core.setOutput('issue_title', issue.data.title);
             core.setOutput('issue_body', issue.data.body);
-            
+
             // Parse implementation request from comment or use issue body
             let implementation_request = issue.data.body;
             if (context.eventName === 'issue_comment') {
@@ -730,7 +703,7 @@ jobs:
                 implementation_request = issue.data.body;
               }
             }
-            
+
             core.setOutput('implementation_request', implementation_request);
 
       - name: 'Run iFlow CLI Implementation'
@@ -812,18 +785,18 @@ jobs:
             - Ensure new code follows existing project conventions
             - Add or modify tests if applicable
             - Reference all shell variables as "${VAR}" (with quotes and braces)
-            
+
             ## Creating Pull Request
-            
+
             Once you have implemented the feature, create a pull request using the GitHub MCP tool:
             1. Use the create_pull_request to create a Pull Request.
             2. The PR should be created from a new branch with a descriptive name (e.g., feature/issue-${ISSUE_NUMBER}, fix/issue-${ISSUE_NUMBER}, or a descriptive name based on the feature)
             3. The PR title should be descriptive and reference the issue number
             4. The PR body should explain what was implemented and reference the issue
             5. Remember the branch name you create, as it will be needed for the completion comment if PR creation fails
-            
+
             ## Creating Completion Comment
-            
+
             After successfully implementing the feature and creating the PR, add a completion comment to the issue using the GitHub MCP tool:
             1. Use the add_issue_comment to add a comment to issue #${ISSUE_NUMBER}
             2. The comment should include:
@@ -1003,7 +976,7 @@ jobs:
       - name: Checkout PR branch
         uses: xt0rted/pull-request-comment-branch@v3.0.0
         id: checkout_pr
-        
+
       - name: Extract instructions from comment
         id: extract
         run: |
@@ -1091,18 +1064,18 @@ jobs:
             - Ensure new code follows existing project conventions
             - Add or modify tests if applicable
             - Reference all shell variables as "${VAR}" (with quotes and braces)
-            
+
             ## Creating Pull Request
-            
+
             Once you have implemented the changes, create a pull request using the GitHub MCP tool:
             1. Use the create_pull_request to create a Pull Request.
             2. The PR should be created from a new branch with a descriptive name (e.g., feature/pr-${{ github.event.issue.number }}, fix/pr-${{ github.event.issue.number }}, or a descriptive name based on the changes)
             3. The PR title should be descriptive and reference the PR number
             4. The PR body should explain what was implemented and reference the original PR
             5. Remember the branch name you create, as it will be needed for the completion comment if PR creation fails
-            
+
             ## Creating Completion Comment
-            
+
             After successfully implementing the changes and creating the PR, add a completion comment to the original PR using the GitHub MCP tool:
             1. Use the add_issue_comment to add a comment to the original PR
             2. The comment should include:

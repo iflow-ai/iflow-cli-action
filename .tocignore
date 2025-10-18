@@ -1,4 +1,4 @@
 {
-  "files": ["CHANGELOG.md"],
+  "files": ["CHANGELOG.md", "IFLOW.md"],
   "patterns": [".git/*", "node_modules/*", "*.min.md", ".iflow/*"]
 }

@@ -1,5 +1,18 @@
 # Developer Guide
 
+<!-- TOC start -->
+## Table of Contents
+
+- [Development Setup](#development-setup)
+- [Documentation Tools](#documentation-tools)
+  - [Table of Contents Generator](#table-of-contents-generator)
+    - [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Default Ignores](#default-ignores)
+
+[Back to Table of Contents](README.md#table-of-contents)
+<!-- TOC end -->
+
 ## Development Setup
 
 TODO:
@@ -45,6 +58,7 @@ Create a `.tocignore` file in your repository root to configure which files to i
 #### Default Ignores
 
 By default, the script ignores:
+
 - `.git/` directory
 - `node_modules/` directory
 - `*.min.md` files

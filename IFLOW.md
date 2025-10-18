@@ -40,7 +40,6 @@ This repository is a production-ready GitHub Action that wraps the iFlow CLI, en
 - **Configurable authentication** with iFlow API (API key or settings JSON)
 - **Advanced timeout handling** (1-86400 seconds) with graceful degradation
 - **Pre-execution commands** support for environment setup
-- **Extra arguments** support for iFlow CLI customization
 - **Real-time output streaming** during execution
 - **Comprehensive error handling** with actionable troubleshooting guidance
 - **Version management** for GitHub CLI and iFlow CLI
@@ -92,9 +91,6 @@ cargo tarpaulin
 
 # With pre-execution commands
 ./target/release/iflow-cli-action --prompt "Generate docs" --api-key YOUR_API_KEY --precmd "npm install && npm run build"
-
-# With extra arguments
-./target/release/iflow-cli-action --prompt "Analyze code" --api-key YOUR_API_KEY --extra-args "--verbose --format json"
 
 # With specific versions
 ./target/release/iflow-cli-action --prompt "Test" --api-key YOUR_API_KEY --gh-version "2.76.2" --iflow-version "0.2.4"
