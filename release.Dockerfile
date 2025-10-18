@@ -1,9 +1,9 @@
-# Use the base image that already has Rust installed
+# Use the base image that already has Go installed
 FROM ghcr.io/iflow-ai/iflow-cli-action:main
 
-# Copy the locally built binary
-COPY target/release/iflow-cli-action /usr/local/bin/iflow-cli-action
-RUN chmod +x /usr/local/bin/iflow-cli-action
+ENV IFLOW_CLI_ACTION_VERSION=v2.0.0-beta.6
+RUN wget https://github.com/iflow-ai/iflow-cli-action/releases/download/${IFLOW_CLI_ACTION_VERSION}/iflow-cli-action -O /usr/local/bin/iflow-cli-action \
+    && chmod +x /usr/local/bin/iflow-cli-action
 
 # Set working directory for runtime
 WORKDIR /github/workspace
