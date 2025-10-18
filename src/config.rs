@@ -166,17 +166,15 @@ impl Cli {
             .map_err(|e| format!("failed to marshal settings: {}", e))
     }
 
-    
-
     /// Run iFlow using WebSocket client
     /// Returns Ok(Some(summary)) when a summary was generated, Ok(None) when nothing to summarize,
     /// or Err(...) on error.
     pub async fn run_websocket(&self) -> Result<Option<String>, String> {
+        use crate::github_actions::{generate_summary_markdown, write_step_summary};
         use futures::stream::StreamExt;
         use iflow_cli_sdk_rust::error::IFlowError;
         use iflow_cli_sdk_rust::{IFlowClient, IFlowOptions, Message};
         use std::io::Write;
-        use crate::github_actions::{generate_summary_markdown, write_step_summary};
 
         // Holder to pass the generated summary out of the LocalSet closure
         let summary_holder = std::sync::Arc::new(std::sync::Mutex::new(None::<String>));
@@ -249,8 +247,11 @@ impl Cli {
                                 collected_messages.push_str(&format!("🤖 Assistant: {}", content));
                             }
                             Message::ToolCall { id, name, status } => {
-                                println!("
-🔧 Tool call: {} ({}) {:?}", id, name, status);
+                                println!(
+                                    "
+🔧 Tool call: {} ({}) {:?}",
+                                    id, name, status
+                                );
 
                                 // Collect tool call messages for summary
                                 collected_messages.push_str(&format!(
@@ -268,10 +269,14 @@ impl Cli {
 
                                 // Display all plan entries with status
                                 if !plan_entries.is_empty() {
-                                    println!("
-📋 Plan:");
-                                    collected_messages.push_str("
-📋 Plan:");
+                                    println!(
+                                        "
+📋 Plan:"
+                                    );
+                                    collected_messages.push_str(
+                                        "
+📋 Plan:",
+                                    );
                                     for (i, (content, status)) in plan_entries.iter().enumerate() {
                                         let status_icon = match status {
                                             iflow_cli_sdk_rust::types::PlanStatus::Pending => "⏳",
@@ -294,10 +299,14 @@ impl Cli {
                                 }
                             }
                             Message::TaskFinish { .. } => {
-                                println!("
-✅ Task completed");
-                                collected_messages.push_str("
-✅ Task completed");
+                                println!(
+                                    "
+✅ Task completed"
+                                );
+                                collected_messages.push_str(
+                                    "
+✅ Task completed",
+                                );
                                 break;
                             }
                             Message::Error {
@@ -305,19 +314,29 @@ impl Cli {
                                 message: msg,
                                 details: _,
                             } => {
-                                eprintln!("
-❌ Error {}: {}", code, msg);
-                                collected_messages
-                                    .push_str(&format!("
-❌ Error {}: {}", code, msg));
+                                eprintln!(
+                                    "
+❌ Error {}: {}",
+                                    code, msg
+                                );
+                                collected_messages.push_str(&format!(
+                                    "
+❌ Error {}: {}",
+                                    code, msg
+                                ));
                                 break;
                             }
                             Message::User { content } => {
-                                println!("
-👤 User message: {}", content);
-                                collected_messages
-                                    .push_str(&format!("
-👤 User message: {}", content));
+                                println!(
+                                    "
+👤 User message: {}",
+                                    content
+                                );
+                                collected_messages.push_str(&format!(
+                                    "
+👤 User message: {}",
+                                    content
+                                ));
                             }
                         }
                     }
@@ -332,8 +351,10 @@ impl Cli {
                 // Handle the send_message result to catch timeout errors
                 match client.send_message(prompt, None).await {
                     Ok(()) => {
-                        println!("
-✅ Prompt message sent successfully");
+                        println!(
+                            "
+✅ Prompt message sent successfully"
+                        );
                     }
                     Err(IFlowError::Timeout(msg)) => {
                         eprintln!("⏰ Timeout error occurred: {}", msg);
@@ -402,8 +423,10 @@ impl Cli {
                 };
 
                 // Disconnect
-                println!("
-🔌 Disconnecting...");
+                println!(
+                    "
+🔌 Disconnecting..."
+                );
                 client
                     .disconnect()
                     .await

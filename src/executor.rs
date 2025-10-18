@@ -22,9 +22,7 @@ pub fn execute_precmd(precmd: &Option<String>, working_directory: &str) -> Resul
                     .arg(command)
                     .current_dir(working_directory)
                     .output()
-                    .map_err(|e| {
-                        format!("failed to execute pre-command '{}': {}", command, e)
-                    })?;
+                    .map_err(|e| format!("failed to execute pre-command '{}': {}", command, e))?;
 
                 // Print stdout and stderr
                 if !output.stdout.is_empty() {

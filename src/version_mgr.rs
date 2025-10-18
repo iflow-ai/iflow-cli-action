@@ -59,7 +59,10 @@ pub fn print_version_info() {
 }
 
 /// Installs specific versions of GitHub CLI and iFlow CLI if requested
-pub fn install_specific_versions(gh_version: &Option<String>, iflow_version: &Option<String>) -> Result<(), String> {
+pub fn install_specific_versions(
+    gh_version: &Option<String>,
+    iflow_version: &Option<String>,
+) -> Result<(), String> {
     // Install specific GitHub CLI version if requested
     if let Some(gh_version) = gh_version {
         if !gh_version.is_empty() {
@@ -74,9 +77,7 @@ pub fn install_specific_versions(gh_version: &Option<String>, iflow_version: &Op
                 .arg("-c")
                 .arg(&install_cmd)
                 .output()
-                .map_err(|e| {
-                    format!("failed to execute GitHub CLI installation command: {}", e)
-                })?;
+                .map_err(|e| format!("failed to execute GitHub CLI installation command: {}", e))?;
 
             if !output.status.success() {
                 let error = String::from_utf8_lossy(&output.stderr);
@@ -103,9 +104,7 @@ pub fn install_specific_versions(gh_version: &Option<String>, iflow_version: &Op
                 .arg("-g")
                 .arg(format!("@iflow-ai/iflow-cli@{}", iflow_version))
                 .output()
-                .map_err(|e| {
-                    format!("failed to execute iFlow CLI installation command: {}", e)
-                })?;
+                .map_err(|e| format!("failed to execute iFlow CLI installation command: {}", e))?;
 
             if !output.status.success() {
                 let error = String::from_utf8_lossy(&output.stderr);

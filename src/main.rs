@@ -2,14 +2,14 @@ use clap::Parser;
 use std::env;
 
 mod config;
-mod version_mgr;
 mod executor;
 mod github_actions;
+mod version_mgr;
 
 use config::Cli;
-use version_mgr::{print_version_info, install_specific_versions};
 use executor::execute_precmd;
 use github_actions::write_github_output;
+use version_mgr::{install_specific_versions, print_version_info};
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
