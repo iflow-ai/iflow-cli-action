@@ -52,10 +52,6 @@ struct Cli {
     #[clap(long, env = "INPUT_TIMEOUT", default_value = "3600")]
     timeout: u32,
 
-    /// Additional command line arguments to pass to iFlow CLI
-    #[clap(long, env = "INPUT_EXTRA_ARGS")]
-    extra_args: Option<String>,
-
     /// Shell command(s) to execute before running iFlow CLI
     #[clap(long, env = "INPUT_PRECMD")]
     precmd: Option<String>,
@@ -599,10 +595,6 @@ impl Cli {
                             "workingDir",
                             serde_json::Value::String(self.working_directory.clone()),
                         );
-                        config_map.insert(
-                            "extraArgs",
-                            serde_json::Value::String(self.extra_args.clone().unwrap_or_default()),
-                        );
                         config_map.insert("prompt", serde_json::Value::String(prompt.clone()));
 
                         // Generate summary
@@ -737,7 +729,6 @@ async fn main() -> Result<(), String> {
     println!("  model: {}", cli.model);
     println!("  working_directory: {}", cli.working_directory);
     println!("  timeout: {}", cli.timeout);
-    println!("  extra_args: {:?}", cli.extra_args);
     println!("  precmd: {:?}", cli.precmd);
     println!("  gh_version: {:?}", cli.gh_version);
     println!("  iflow_version: {:?}", cli.iflow_version);

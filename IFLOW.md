@@ -77,9 +77,6 @@ cargo test test_name
 
 # Run tests with coverage
 cargo tarpaulin
-
-# Run tests with miri for undefined behavior detection
-cargo miri test
 ```
 
 ### Running
@@ -158,7 +155,6 @@ INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW
 | `model` | string | `Qwen3-Coder` | Model name to use |
 | `working_directory` | string | `.` | Working directory to run from |
 | `timeout` | int | `3600` | Timeout in seconds (1-86400) |
-| `extra_args` | string | - | Additional CLI arguments for iFlow |
 | `precmd` | string | - | Shell commands to run before iFlow |
 | `gh_version` | string | - | Version of GitHub CLI to install (e.g., "2.76.2") |
 | `iflow_version` | string | - | Version of iFlow CLI to install (e.g., "0.2.4") |
@@ -186,17 +182,6 @@ Execute shell commands before running iFlow CLI:
       npm install
       npm run build
       echo "Environment ready"
-```
-
-### Extra Arguments (`extra_args`)
-
-Pass additional arguments to iFlow CLI:
-
-```yaml
-- uses: iflow-ai/iflow-cli-action@main
-  with:
-    prompt: "Review code"
-    extra_args: "--verbose --format markdown --max-tokens 2000"
 ```
 
 ### Custom Settings JSON
@@ -370,7 +355,6 @@ The repository includes several example workflows:
     precmd: |
       npm install
       npm run build
-    extra_args: "--verbose --format markdown"
     gh_version: "2.76.2"
     iflow_version: "0.2.4"
 
@@ -435,7 +419,6 @@ export INPUT_IFLOW_VERSION="0.2.4"
 - **Timeout tuning**: Start with shorter timeouts, increase as needed
 - **Model selection**: Choose appropriate model for task complexity
 - **Pre-execution optimization**: Cache dependencies when possible
-- **Output handling**: Use `extra_args` to limit output size
 - **Version management**: Use compatible tool versions
 
 ### Security Considerations

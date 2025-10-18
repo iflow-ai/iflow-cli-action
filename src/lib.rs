@@ -29,10 +29,6 @@ pub fn generate_summary_markdown(
         .get("workingDir")
         .and_then(|v| v.as_str())
         .unwrap_or(".");
-    let extra_args_val = config
-        .get("extraArgs")
-        .and_then(|v| v.as_str())
-        .unwrap_or("");
     let prompt_val = config.get("prompt").and_then(|v| v.as_str()).unwrap_or("");
 
     // Add header with emoji based on status
@@ -69,9 +65,6 @@ pub fn generate_summary_markdown(
     summary.push_str(&format!("| Base URL | `{}` |\n", base_url_val));
     summary.push_str(&format!("| Timeout | {} seconds |\n", timeout_val));
     summary.push_str(&format!("| Working Directory | `{}` |\n", working_dir_val));
-    if !extra_args_val.is_empty() {
-        summary.push_str(&format!("| Extra Arguments | `{}` |\n", extra_args_val));
-    }
     summary.push_str("\n");
 
     // Add prompt section
