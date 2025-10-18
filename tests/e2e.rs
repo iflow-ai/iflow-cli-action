@@ -257,7 +257,7 @@ fn test_precmd_execution() {
 
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     // Create a test file to verify precmd execution
     let test_file = temp_path.join("test_precmd.txt");
 
@@ -288,7 +288,10 @@ fn test_precmd_execution() {
     );
 
     // Check that the precmd was executed by verifying the test file was created
-    assert!(test_file.exists(), "PreCmd did not execute - test file was not created");
+    assert!(
+        test_file.exists(),
+        "PreCmd did not execute - test file was not created"
+    );
 
     // Check the content of the test file
     let content = fs::read_to_string(&test_file).expect("Failed to read test file");
@@ -305,7 +308,7 @@ fn test_precmd_execution_multiple_commands() {
 
     let temp_path = temp_dir.path();
     let settings_file = temp_path.join("settings.json");
-    
+
     // Create test files to verify precmd execution
     let test_file1 = temp_path.join("test_precmd1.txt");
     let test_file2 = temp_path.join("test_precmd2.txt");
@@ -343,13 +346,19 @@ fn test_precmd_execution_multiple_commands() {
     );
 
     // Check that both precmd commands were executed
-    assert!(test_file1.exists(), "First precmd command did not execute - test file was not created");
-    assert!(test_file2.exists(), "Second precmd command did not execute - test file was not created");
+    assert!(
+        test_file1.exists(),
+        "First precmd command did not execute - test file was not created"
+    );
+    assert!(
+        test_file2.exists(),
+        "Second precmd command did not execute - test file was not created"
+    );
 
     // Check the content of the test files
     let content1 = fs::read_to_string(&test_file1).expect("Failed to read first test file");
     assert_eq!(content1.trim(), "first command");
-    
+
     let content2 = fs::read_to_string(&test_file2).expect("Failed to read second test file");
     assert_eq!(content2.trim(), "second command");
 }
@@ -392,7 +401,9 @@ fn test_precmd_execution_fails() {
 
     // Check the error message
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains("Pre-command Error: pre-command 'exit 1' failed with exit code: Some(1)"));
+    assert!(
+        stderr.contains("Pre-command Error: pre-command 'exit 1' failed with exit code: Some(1)")
+    );
 }
 
 #[test]
@@ -475,12 +486,24 @@ fn test_github_actions_outputs_written() {
         .expect("Failed to execute test");
 
     // Command should succeed
-    assert!(output.status.success(), "Command failed: stderr: {}", String::from_utf8_lossy(&output.stderr));
+    assert!(
+        output.status.success(),
+        "Command failed: stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
 
     // Read GITHUB_OUTPUT file
     let content = std::fs::read_to_string(&github_output).expect("Failed to read GITHUB_OUTPUT");
 
     // Should contain exit_code and result keys
-    assert!(content.contains("exit_code=0") || content.contains("exit_code<<EOF"), "GITHUB_OUTPUT missing exit_code: {}", content);
-    assert!(content.contains("result=") || content.contains("result<<EOF"), "GITHUB_OUTPUT missing result: {}", content);
+    assert!(
+        content.contains("exit_code=0") || content.contains("exit_code<<EOF"),
+        "GITHUB_OUTPUT missing exit_code: {}",
+        content
+    );
+    assert!(
+        content.contains("result=") || content.contains("result<<EOF"),
+        "GITHUB_OUTPUT missing result: {}",
+        content
+    );
 }

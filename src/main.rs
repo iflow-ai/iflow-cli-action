@@ -1,7 +1,7 @@
 use clap::Parser;
-use std::fs;
-use std::env;
 use iflow_cli_action::generate_summary_markdown;
+use std::env;
+use std::fs;
 
 /// iFlow CLI Action wrapper
 #[derive(Parser, Debug)]
@@ -251,7 +251,9 @@ impl Cli {
                         .arg(command)
                         .current_dir(&self.working_directory)
                         .output()
-                        .map_err(|e| format!("failed to execute pre-command '{}': {}", command, e))?;
+                        .map_err(|e| {
+                            format!("failed to execute pre-command '{}': {}", command, e)
+                        })?;
 
                     // Print stdout and stderr
                     if !output.stdout.is_empty() {
@@ -282,24 +284,32 @@ impl Cli {
         if let Some(ref gh_version) = self.gh_version {
             if !gh_version.is_empty() {
                 println!("Installing GitHub CLI version: {}", gh_version);
-                
+
                 let install_cmd = format!(
                     "curl -fsSL https://github.com/cli/cli/releases/download/v{0}/gh_{0}_linux_amd64.tar.gz | tar xz && cp gh_{0}_linux_amd64/bin/gh /usr/local/bin/ && rm -rf gh_{0}_linux_amd64",
                     gh_version
                 );
-                
+
                 let output = std::process::Command::new("sh")
                     .arg("-c")
                     .arg(&install_cmd)
                     .output()
-                    .map_err(|e| format!("failed to execute GitHub CLI installation command: {}", e))?;
+                    .map_err(|e| {
+                        format!("failed to execute GitHub CLI installation command: {}", e)
+                    })?;
 
                 if !output.status.success() {
                     let error = String::from_utf8_lossy(&output.stderr);
-                    return Err(format!("failed to install GitHub CLI version {}: {}", gh_version, error));
+                    return Err(format!(
+                        "failed to install GitHub CLI version {}: {}",
+                        gh_version, error
+                    ));
                 }
-                
-                println!("✅ Successfully installed GitHub CLI version: {}", gh_version);
+
+                println!(
+                    "✅ Successfully installed GitHub CLI version: {}",
+                    gh_version
+                );
             }
         }
 
@@ -307,20 +317,28 @@ impl Cli {
         if let Some(ref iflow_version) = self.iflow_version {
             if !iflow_version.is_empty() {
                 println!("Installing iFlow CLI version: {}", iflow_version);
-                
+
                 let output = std::process::Command::new("npm")
                     .arg("install")
                     .arg("-g")
                     .arg(format!("@iflow-ai/iflow-cli@{}", iflow_version))
                     .output()
-                    .map_err(|e| format!("failed to execute iFlow CLI installation command: {}", e))?;
+                    .map_err(|e| {
+                        format!("failed to execute iFlow CLI installation command: {}", e)
+                    })?;
 
                 if !output.status.success() {
                     let error = String::from_utf8_lossy(&output.stderr);
-                    return Err(format!("failed to install iFlow CLI version {}: {}", iflow_version, error));
+                    return Err(format!(
+                        "failed to install iFlow CLI version {}: {}",
+                        iflow_version, error
+                    ));
                 }
-                
-                println!("✅ Successfully installed iFlow CLI version: {}", iflow_version);
+
+                println!(
+                    "✅ Successfully installed iFlow CLI version: {}",
+                    iflow_version
+                );
             }
         }
 
@@ -410,10 +428,8 @@ impl Cli {
         } else {
             tracing::Level::INFO
         };
-        
-        tracing_subscriber::fmt()
-            .with_max_level(log_level)
-            .init();
+
+        tracing_subscriber::fmt().with_max_level(log_level).init();
 
         println!("🚀 Starting iFlow WebSocket client...");
 
@@ -469,15 +485,18 @@ impl Cli {
                                     eprintln!("❌ Error flushing stdout: {}", err);
                                     break;
                                 }
-                                
+
                                 // Collect assistant messages for summary
                                 collected_messages.push_str(&format!("🤖 Assistant: {}", content));
                             }
                             Message::ToolCall { id, name, status } => {
                                 println!("\n🔧 Tool call: {} ({}): {:?}", id, name, status);
-                                
+
                                 // Collect tool call messages for summary
-                                collected_messages.push_str(&format!("\n🔧 Tool call: {} ({}): {:?}", id, name, status));
+                                collected_messages.push_str(&format!(
+                                    "\n🔧 Tool call: {} ({}): {:?}",
+                                    id, name, status
+                                ));
                             }
                             Message::Plan { entries } => {
                                 // Update plan entries
@@ -501,7 +520,12 @@ impl Cli {
                                             }
                                         };
                                         println!("  {}. {} {}", i + 1, status_icon, content);
-                                        collected_messages.push_str(&format!("\n  {}. {} {}", i + 1, status_icon, content));
+                                        collected_messages.push_str(&format!(
+                                            "\n  {}. {} {}",
+                                            i + 1,
+                                            status_icon,
+                                            content
+                                        ));
                                     }
                                 }
                             }
@@ -516,12 +540,14 @@ impl Cli {
                                 details: _,
                             } => {
                                 eprintln!("\n❌ Error {}: {}", code, msg);
-                                collected_messages.push_str(&format!("\n❌ Error {}: {}", code, msg));
+                                collected_messages
+                                    .push_str(&format!("\n❌ Error {}: {}", code, msg));
                                 break;
                             }
                             Message::User { content } => {
                                 println!("\n👤 User message: {}", content);
-                                collected_messages.push_str(&format!("\n👤 User message: {}", content));
+                                collected_messages
+                                    .push_str(&format!("\n👤 User message: {}", content));
                             }
                         }
                     }
@@ -562,15 +588,26 @@ impl Cli {
                         // Prepare configuration map for summary generation
                         let mut config_map = std::collections::HashMap::new();
                         config_map.insert("isTimeout", serde_json::Value::Bool(false));
-                        config_map.insert("timeout", serde_json::Value::Number(serde_json::Number::from(self.timeout)));
+                        config_map.insert(
+                            "timeout",
+                            serde_json::Value::Number(serde_json::Number::from(self.timeout)),
+                        );
                         config_map.insert("model", serde_json::Value::String(self.model.clone()));
-                        config_map.insert("baseURL", serde_json::Value::String(self.base_url.clone()));
-                        config_map.insert("workingDir", serde_json::Value::String(self.working_directory.clone()));
-                        config_map.insert("extraArgs", serde_json::Value::String(self.extra_args.clone().unwrap_or_default()));
+                        config_map
+                            .insert("baseURL", serde_json::Value::String(self.base_url.clone()));
+                        config_map.insert(
+                            "workingDir",
+                            serde_json::Value::String(self.working_directory.clone()),
+                        );
+                        config_map.insert(
+                            "extraArgs",
+                            serde_json::Value::String(self.extra_args.clone().unwrap_or_default()),
+                        );
                         config_map.insert("prompt", serde_json::Value::String(prompt.clone()));
 
                         // Generate summary
-                        let summary_content = generate_summary_markdown(&collected_messages, 0, &config_map);
+                        let summary_content =
+                            generate_summary_markdown(&collected_messages, 0, &config_map);
 
                         // Write collected messages to GitHub step summary if in GitHub Actions environment
                         if std::env::var("GITHUB_ACTIONS").is_ok() {
@@ -620,7 +657,7 @@ impl Cli {
 async fn main() -> Result<(), String> {
     // Check if we're running in GitHub Actions environment
     let is_github_actions = env::var("GITHUB_ACTIONS").is_ok();
-    
+
     // Parse CLI arguments
     let cli = Cli::parse();
 
