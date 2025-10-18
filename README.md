@@ -322,7 +322,7 @@ The following example demonstrates how to configure and use the DeepWiki MCP ser
 
 ```yaml
 - name: iFlow CLI with MCP Server
-  uses: iflow-ai/iflow-cli-action@v1.4.0
+  uses: iflow-ai/iflow-cli-action@v2.0.0
   with:
     prompt: "use @deepwiki to search how to use Skynet to build a game"
     api_key: ${{ secrets.IFLOW_API_KEY }}
