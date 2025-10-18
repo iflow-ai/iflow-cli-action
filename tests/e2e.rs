@@ -438,3 +438,49 @@ fn test_dry_run_mode() {
     let stdout = String::from_utf8_lossy(&output.stdout);
     assert!(stdout.contains("DRY RUN: Would execute run_websocket()"));
 }
+
+#[test]
+fn test_github_actions_outputs_written() {
+    // Create a temporary directory for testing
+    let temp_dir = tempfile::Builder::new()
+        .prefix("iflow_cli_test")
+        .tempdir()
+        .expect("Failed to create temporary directory");
+
+    let temp_path = temp_dir.path();
+    let settings_file = temp_path.join("settings.json");
+
+    // Temp files for GITHUB_OUTPUT and GITHUB_STEP_SUMMARY
+    let github_output = temp_path.join("github_output.txt");
+    let github_summary = temp_path.join("github_summary.md");
+
+    let output = Command::new("cargo")
+        .env("GITHUB_ACTIONS", "true")
+        .env("GITHUB_OUTPUT", &github_output)
+        .env("GITHUB_STEP_SUMMARY", &github_summary)
+        .args([
+            "run",
+            "--bin",
+            "iflow-cli-action",
+            "--",
+            "--prompt",
+            "test prompt",
+            "--api-key",
+            "test-api-key",
+            "--dry-run",
+            "--settings-file-path",
+            settings_file.to_str().unwrap(),
+        ])
+        .output()
+        .expect("Failed to execute test");
+
+    // Command should succeed
+    assert!(output.status.success(), "Command failed: stderr: {}", String::from_utf8_lossy(&output.stderr));
+
+    // Read GITHUB_OUTPUT file
+    let content = std::fs::read_to_string(&github_output).expect("Failed to read GITHUB_OUTPUT");
+
+    // Should contain exit_code and result keys
+    assert!(content.contains("exit_code=0") || content.contains("exit_code<<EOF"), "GITHUB_OUTPUT missing exit_code: {}", content);
+    assert!(content.contains("result=") || content.contains("result<<EOF"), "GITHUB_OUTPUT missing result: {}", content);
+}

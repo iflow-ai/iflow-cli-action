@@ -357,12 +357,52 @@ impl Cli {
             })
     }
 
+    /// Writes a key=value pair to GITHUB_OUTPUT (GitHub Actions outputs)
+    /// Appends to the file specified by the GITHUB_OUTPUT environment variable.
+    pub fn write_github_output(key: &str, value: &str) -> Result<(), String> {
+        // Only proceed if running in GitHub Actions
+        if std::env::var("GITHUB_ACTIONS").is_err() {
+            return Ok(());
+        }
+
+        let output_file = match std::env::var("GITHUB_OUTPUT") {
+            Ok(f) => f,
+            Err(_) => return Err("GITHUB_OUTPUT not set".to_string()),
+        };
+
+        std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(&output_file)
+            .map_err(|e| format!("failed to open GITHUB_OUTPUT file: {}", e))
+            .and_then(|mut file| {
+                use std::io::Write;
+                // Use the key=value format. If value contains newlines, use the
+                // multiline GitHub Actions syntax (key<<EOF\n...\nEOF)
+                if value.contains('\n') {
+                    // Write as multiline
+                    let payload = format!("{}<<EOF\n{}\nEOF\n", key, value);
+                    file.write_all(payload.as_bytes())
+                        .map_err(|e| format!("failed to write to GITHUB_OUTPUT: {}", e))
+                } else {
+                    let payload = format!("{}={}\n", key, value);
+                    file.write_all(payload.as_bytes())
+                        .map_err(|e| format!("failed to write to GITHUB_OUTPUT: {}", e))
+                }
+            })
+    }
+
     /// Run iFlow using WebSocket client
-    async fn run_websocket(&self) -> Result<(), String> {
+    /// Returns Ok(Some(summary)) when a summary was generated, Ok(None) when nothing to summarize,
+    /// or Err(...) on error.
+    async fn run_websocket(&self) -> Result<Option<String>, String> {
         use futures::stream::StreamExt;
         use iflow_cli_sdk_rust::error::IFlowError;
         use iflow_cli_sdk_rust::{IFlowClient, IFlowOptions, Message};
         use std::io::Write;
+
+        // Holder to pass the generated summary out of the LocalSet closure
+        let summary_holder = std::sync::Arc::new(std::sync::Mutex::new(None::<String>));
 
         // Initialize logging with environment variable support
         let log_level = if self.debug {
@@ -379,8 +419,9 @@ impl Cli {
 
         // Use LocalSet for spawn_local compatibility
         let local = tokio::task::LocalSet::new();
+        let summary_holder_clone = summary_holder.clone();
         local
-            .run_until(async {
+            .run_until(async move {
                 // Configure client options with WebSocket configuration and custom timeout
                 let custom_timeout_secs = self.timeout as f64;
                 let mut process_config = iflow_cli_sdk_rust::types::ProcessConfig::new()
@@ -415,6 +456,7 @@ impl Cli {
                 let mut plan_entries: Vec<(String, iflow_cli_sdk_rust::types::PlanStatus)> =
                     Vec::new();
 
+                let summary_holder_for_task = summary_holder_clone.clone();
                 let message_task = tokio::task::spawn_local(async move {
                     let mut stdout = std::io::stdout();
                     let mut collected_messages = String::new();
@@ -516,26 +558,33 @@ impl Cli {
                 {
                     Ok(Ok(collected_messages)) => {
                         println!("✅ Message handling completed successfully");
-                        
+
+                        // Prepare configuration map for summary generation
+                        let mut config_map = std::collections::HashMap::new();
+                        config_map.insert("isTimeout", serde_json::Value::Bool(false));
+                        config_map.insert("timeout", serde_json::Value::Number(serde_json::Number::from(self.timeout)));
+                        config_map.insert("model", serde_json::Value::String(self.model.clone()));
+                        config_map.insert("baseURL", serde_json::Value::String(self.base_url.clone()));
+                        config_map.insert("workingDir", serde_json::Value::String(self.working_directory.clone()));
+                        config_map.insert("extraArgs", serde_json::Value::String(self.extra_args.clone().unwrap_or_default()));
+                        config_map.insert("prompt", serde_json::Value::String(prompt.clone()));
+
+                        // Generate summary
+                        let summary_content = generate_summary_markdown(&collected_messages, 0, &config_map);
+
                         // Write collected messages to GitHub step summary if in GitHub Actions environment
                         if std::env::var("GITHUB_ACTIONS").is_ok() {
-                            // Prepare configuration map for summary generation
-                            let mut config_map = std::collections::HashMap::new();
-                            config_map.insert("isTimeout", serde_json::Value::Bool(false));
-                            config_map.insert("timeout", serde_json::Value::Number(serde_json::Number::from(self.timeout)));
-                            config_map.insert("model", serde_json::Value::String(self.model.clone()));
-                            config_map.insert("baseURL", serde_json::Value::String(self.base_url.clone()));
-                            config_map.insert("workingDir", serde_json::Value::String(self.working_directory.clone()));
-                            config_map.insert("extraArgs", serde_json::Value::String(self.extra_args.clone().unwrap_or_default()));
-                            config_map.insert("prompt", serde_json::Value::String(prompt.clone()));
-
-                            // Generate and write summary
-                            let summary_content = generate_summary_markdown(&collected_messages, 0, &config_map);
                             if let Err(e) = Self::write_step_summary(&summary_content) {
                                 eprintln!("⚠️  Warning: Failed to write step summary: {}", e);
                             }
                         }
-                        
+
+                        // Store the generated summary into the shared holder so the outer
+                        // function can access it after the LocalSet completes.
+                        if let Ok(mut guard) = summary_holder_for_task.lock() {
+                            *guard = Some(summary_content.clone());
+                        }
+
                         Ok(())
                     }
                     Ok(Err(err)) => {
@@ -561,7 +610,9 @@ impl Cli {
             .await
             .map_err(|e| format!("WebSocket client error: {}", e))?;
 
-        Ok(())
+        // Extract the summary from the holder and return it
+        let summary = summary_holder.lock().map(|g| g.clone()).unwrap_or(None);
+        Ok(summary)
     }
 }
 
@@ -605,10 +656,39 @@ async fn main() -> Result<(), String> {
         // Skip actual execution in dry-run mode
         if cli.dry_run {
             println!("DRY RUN: Would execute run_websocket()");
+            // In dry-run, write empty outputs with exit_code 0
+            let _ = Cli::write_github_output("result", "");
+            let _ = Cli::write_github_output("exit_code", "0");
             return Ok(());
         }
-        cli.run_websocket().await?;
-        return Ok(());
+
+        // Run and capture summary (if any)
+        match cli.run_websocket().await {
+            Ok(maybe_summary) => {
+                if let Some(summary_content) = maybe_summary {
+                    // Write outputs: result (may be multiline) and exit_code=0
+                    if let Err(e) = Cli::write_github_output("result", &summary_content) {
+                        eprintln!("Warning: failed to write result output: {}", e);
+                    }
+                } else {
+                    // No summary produced
+                    let _ = Cli::write_github_output("result", "");
+                }
+
+                if let Err(e) = Cli::write_github_output("exit_code", "0") {
+                    eprintln!("Warning: failed to write exit_code output: {}", e);
+                }
+
+                return Ok(());
+            }
+            Err(err_msg) => {
+                // On error, write result with the error message and exit_code 1
+                let _ = Cli::write_github_output("result", &format!("ERROR: {}", err_msg));
+                let _ = Cli::write_github_output("exit_code", "1");
+                eprintln!("WebSocket error: {}", err_msg);
+                std::process::exit(1);
+            }
+        }
     }
 
     // Print the parsed arguments for verification
