@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 # Set noninteractive installation mode to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install runtime dependencies including Node.js, GitHub CLI, Rust, and other tools
+# Install runtime dependencies including Node.js, GitHub CLI, Go, Rust, and other tools
 RUN apt-get update -y && apt-get -y upgrade \
     && apt-get install -y \
     wget \
@@ -47,22 +47,30 @@ RUN apt-get update -y && apt-get -y upgrade \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
     && apt-get install -y gh \
-    # Install Rust
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    # Install Go for github-mcp-server
+    && wget https://go.dev/dl/go1.24.7.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.24.7.linux-amd64.tar.gz \
+    && rm go1.24.7.linux-amd64.tar.gz \
     # Pre-install iFlow CLI using npm package
     && npm install -g @iflow-ai/iflow-cli \
     # Install uv - ultra-fast Python package manager
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
     # Install github-mcp-server CLI tool
-    && /root/.cargo/bin/cargo install github-mcp-server \
+    && /usr/local/go/bin/go install github.com/github/github-mcp-server/cmd/github-mcp-server@latest \
+    # Install Rust
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     # Clean up apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     # Create .iflow directory
     && mkdir -p /root/.iflow
 
+ENV GOROOT=/usr/local/go
+ENV GOPATH=/go
+ENV PATH=$PATH:$GOPATH/bin
+# Ensure Go is in PATH
 # Set Rust environment variables
-ENV PATH="/root/.cargo/bin:${PATH}"
+ENV PATH="/root/.cargo/bin:/usr/local/go/bin:${PATH}"
 
 # Copy the Rust source code
 COPY . /workspace
