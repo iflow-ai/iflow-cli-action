@@ -334,12 +334,14 @@ For detailed examples of these use cases, please refer to the workflow files in 
 ### Code Analysis and Review
 
 For code review workflows, see:
+
 - [Code Review on Pull Requests](examples/code-review.yml) - Automatically reviews PRs when opened/reopened or when triggered by comment
 - [PR Review Killer](examples/pr-review-killer.yml) - Implements changes to PRs based on comments
 
 ### Documentation Generation
 
 For documentation generation workflows, see:
+
 - [Documentation Generation](examples/documentation.yml) - Automatically generates technical documentation from codebase
 
 ### Automated Testing Suggestions
@@ -349,6 +351,7 @@ Automated testing suggestions can be implemented similar to the code review patt
 ### Issue Management
 
 For issue management workflows, see:
+
 - [Issue Killer](examples/issue-killer.yml) - Automatically implements features based on GitHub issues
 - [Issue Triage](examples/issue-triage.yaml) - Automatically labels new GitHub issues
 - [Issue Killer](examples/issue-killer.yml) - Implements features based on GitHub issues
@@ -382,7 +385,7 @@ env:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
+Contributions are welcome! Please feel free to submit issues and pull requests. Start with [Contributing Guide](./CONTRIBUTING.md).
 
 ## License
 

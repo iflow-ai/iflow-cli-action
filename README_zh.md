@@ -38,13 +38,11 @@
 [Back to Table of Contents](README.md#table-of-contents)
 <!-- TOC end -->
 
-
 一个 GitHub Action，使您能够在 GitHub 工作流中运行 [iFlow CLI](https://github.com/iflow-ai/iflow-cli) 命令。这个基于 Docker 的操作预装了 Node.js 22、npm 和 uv（超快 Python 包管理器）以实现最佳性能，并使用 iFlow CLI 执行您指定的命令。
 
 - [English Docs](README.md)
 
 > Docs Site (generated with iFlow CLI GitHub Action): [https://iflow-ai.github.io/iflow-cli-action/](https://iflow-ai.github.io/iflow-cli-action/)
-
 > 文档站点（使用 iFlow CLI GitHub Action 生成）：[https://iflow-ai.github.io/iflow-cli-action/](https://iflow-ai.github.io/iflow-cli-action/)
 
 ## 功能特性
@@ -348,12 +346,14 @@ precmd: |
 ### 代码分析和审查
 
 代码审查工作流，请参见：
+
 - [拉取请求代码审查](examples/code-review.yml) - 在 PR 打开/重新打开或通过评论触发时自动审查 PR
 - [PR Review Killer](examples/pr-review-killer.yml) - 根据评论对 PR 实施更改
 
 ### 文档生成
 
 文档生成工作流，请参见：
+
 - [文档生成](examples/documentation.yml) - 自动从代码库生成技术文档
 
 ### 自动化测试建议
@@ -363,6 +363,7 @@ precmd: |
 ### 问题管理
 
 问题管理工作流，请参见：
+
 - [Issue Killer](examples/issue-killer.yml) - 基于 GitHub 问题自动实现功能
 - [问题分类](examples/issue-triage.yaml) - 自动为新的 GitHub 问题添加标签
 - [Issue Killer](examples/issue-killer.yml) - 基于 GitHub 问题实现功能
@@ -400,7 +401,7 @@ env:
 
 ## 贡献
 
-欢迎贡献！请随时提交问题和拉取请求。
+欢迎贡献！请随时提交问题和拉取请求。参考 [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## 许可证
 
