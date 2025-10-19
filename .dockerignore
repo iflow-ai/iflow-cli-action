@@ -1,0 +1,51 @@
+# Build artifacts
+target/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+node_modules/
+.npm/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+
+# Log files
+*.log
+
+# Other files not needed in Docker build
+.git/
+.gitignore
+README*.md
+CHANGELOG.md
+LICENSE
+.DS_Store
+Thumbs.db
+
+# Test files (they're run in the CI environment)
+tests/
