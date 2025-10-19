@@ -79,7 +79,7 @@ Rustup will read iflow-cli-action's `rust-toolchain.toml` and set up everything 
 
 ```shell
 $ cargo version
-cargo 1.85.0 (stable)
+cargo 1.90.0 (840b83a10 2025-07-30)
 ```
 
 ### Running tests
