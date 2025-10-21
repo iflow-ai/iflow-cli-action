@@ -403,6 +403,17 @@ env:
 
 欢迎贡献！请随时提交问题和拉取请求。参考 [CONTRIBUTING.md](./CONTRIBUTING.md).
 
+## GitHub 应用集成
+
+本项目设计用于与 iFlow CLI GitHub 应用集成，以实现移动和桌面端的使用。但请注意，由于 API 速率限制的约束，iFlow CLI GitHub 应用目前暂不对外开放。我们正在努力在未来使其对公众开放。
+
+目前，您可以通过以下方式触发 iFlow CLI 工作流：
+- GitHub Actions（如示例中所示）
+- GitHub CLI 命令
+- 直接调用 iFlow 平台的 API
+
+一旦 GitHub 应用对外开放，我们将更新此部分。
+
 ## 许可证
 
 该项目根据 MIT 许可证授权 - 有关详细信息，请参见 [LICENSE](LICENSE) 文件。
