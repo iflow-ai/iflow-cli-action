@@ -28,7 +28,13 @@ jobs:
           npm install -g @iflow-ai/iflow-cli@latest
           mkdir -p ~/.iflow
           cat > ~/.iflow/settings.json <<'EOF'
-          ${{ secrets.CI_IFLOW_SETTINGS_JSON }}
+          {
+              "selectedAuthType": "iflow",
+              "apiKey": "${{ secrets.CI_IFLOW_API_KEY }}",
+              "baseUrl": "https://apis.iflow.cn/v1",
+              "modelName": "Qwen3-Coder",
+              "searchApiKey": "${{ secrets.CI_IFLOW_API_KEY }}"
+          }
           EOF
           RUST_LOG=debug cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info -- --nocapture
         env:
