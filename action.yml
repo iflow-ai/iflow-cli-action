@@ -11,7 +11,7 @@ inputs:
     required: true
   api_key:
     description: 'iFlow API key for authentication'
-    required: false
+    required: true
   settings_json:
     description: 'Complete iFlow settings.json content (JSON string). If provided, this will override other configuration options.'
     required: false

@@ -68,7 +68,7 @@ pub struct Cli {
     pub settings_file_path: Option<String>,
 
     /// Dry run mode for E2E testing (skips actual execution)
-    #[clap(long, env = "DRY_RUN")]
+    #[clap(long, env = "INPUT_DRY_RUN")]
     pub dry_run: bool,
 }
 
