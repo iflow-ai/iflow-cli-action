@@ -447,7 +447,7 @@ fn test_dry_run_mode() {
 
     // Check that dry run message was printed
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("DRY RUN: Would execute run_websocket()"));
+    assert!(stdout.contains("DRY RUN: Would execute communicate_with_iflow_cli_via_acp()"));
 }
 
 #[test]
@@ -526,7 +526,7 @@ fn test_only_on_github_actions() {
             "iflow-cli-action",
             "--",
             "--prompt",
-            "what time is it now?",
+            "简单介绍下当前项目的功能，作为 Rust 和 GitHub Actions 专家，分析计划下如何优化这个项目",
             "--api-key",
             api_key.as_str(),
         ])

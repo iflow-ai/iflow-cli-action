@@ -33,7 +33,8 @@ fn test_write_step_summary_not_in_github_actions() {
 
     // Since we can't directly call the function from the binary, we'll test the logic indirectly
     // by checking that it doesn't panic or error even when GITHUB_ACTIONS is not set
-    assert!(true); // Placeholder - in a real implementation we'd test the actual function
+    // This test is a placeholder - in a real implementation we'd test the actual function
+    // For now, we just ensure the test compiles and runs without issues
 }
 
 #[test]
