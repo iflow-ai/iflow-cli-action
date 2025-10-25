@@ -99,7 +99,7 @@ pub async fn communicate_with_iflow_cli_via_acp(
                             }
 
                             // Collect assistant messages for summary
-                            collected_messages.push_str(&format!("🤖 Assistant: {}", content));
+                            collected_messages.push_str(&format!("\n🤖 Assistant: {}", content));
                         }
                         Message::ToolCall { id, name, status } => {
                             println!("🔧 Tool call: {} ({}) {:?}", id, name, status);
@@ -118,7 +118,7 @@ pub async fn communicate_with_iflow_cli_via_acp(
                             // Display all plan entries with status
                             if !plan_entries.is_empty() {
                                 println!("📋 Plan:");
-                                collected_messages.push_str("📋 Plan:");
+                                collected_messages.push_str("\n📋 Plan:");
                                 for (i, (content, status)) in plan_entries.iter().enumerate() {
                                     let status_icon = match status {
                                         iflow_cli_sdk_rust::types::PlanStatus::Pending => "⏳",
@@ -137,7 +137,7 @@ pub async fn communicate_with_iflow_cli_via_acp(
                         }
                         Message::TaskFinish { .. } => {
                             println!("✅ Task completed");
-                            collected_messages.push_str("✅ Task completed");
+                            collected_messages.push_str("\n✅ Task completed");
                             break;
                         }
                         Message::Error {
@@ -146,12 +146,12 @@ pub async fn communicate_with_iflow_cli_via_acp(
                             details: _,
                         } => {
                             eprintln!("❌ Error {}: {}", code, msg);
-                            collected_messages.push_str(&format!("❌ Error {}: {}", code, msg));
+                            collected_messages.push_str(&format!("\n❌ Error {}: {}", code, msg));
                             break;
                         }
                         Message::User { content } => {
                             println!("👤 User message: {}", content);
-                            collected_messages.push_str(&format!("👤 User message: {}", content));
+                            collected_messages.push_str(&format!("\n👤 User message: {}", content));
                         }
                     }
                 }

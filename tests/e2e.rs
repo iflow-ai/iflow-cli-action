@@ -526,7 +526,7 @@ fn test_only_on_github_actions() {
             "iflow-cli-action",
             "--",
             "--prompt",
-            "what time is it now?",
+            "简单介绍下当前项目的功能",
             "--api-key",
             api_key.as_str(),
         ])
