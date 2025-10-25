@@ -526,7 +526,7 @@ fn test_only_on_github_actions() {
             "iflow-cli-action",
             "--",
             "--prompt",
-            "简单介绍下当前项目的功能",
+            "简单介绍下当前项目的功能，作为 Rust 和 GitHub Actions 专家，分析计划下如何优化这个项目",
             "--api-key",
             api_key.as_str(),
         ])
