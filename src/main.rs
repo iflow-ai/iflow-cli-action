@@ -50,7 +50,7 @@ async fn main() -> Result<(), String> {
 
     if let Err(e) = iflow_config.configure(
         cli.settings_json.as_ref(),
-        cli.api_key.as_ref().unwrap_or(&String::new()),
+        cli.api_key.as_deref().unwrap_or(""),
         cli.settings_file_path.as_ref(),
     ) {
         eprintln!("Configuration Error: {}", e);

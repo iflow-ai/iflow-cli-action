@@ -6,7 +6,7 @@ pub fn validate_args(
     timeout: u32,
 ) -> Result<(), String> {
     // Validate required inputs
-    if prompt.is_none() || prompt.unwrap().is_empty() {
+    if prompt.is_none_or(|p| p.is_empty()) {
         return Err("prompt input is required and cannot be empty".to_string());
     }
 
