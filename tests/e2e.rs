@@ -447,7 +447,7 @@ fn test_dry_run_mode() {
 
     // Check that dry run message was printed
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("DRY RUN: Would execute run_websocket()"));
+    assert!(stdout.contains("DRY RUN: Would execute communicate_with_iflow_cli_via_acp()"));
 }
 
 #[test]
