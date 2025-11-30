@@ -387,6 +387,17 @@ env:
 
 Contributions are welcome! Please feel free to submit issues and pull requests. Start with [Contributing Guide](./CONTRIBUTING.md).
 
+## GitHub App Integration
+
+This project is designed to work with the iFlow CLI GitHub App for mobile and desktop integration. However, please note that the iFlow CLI GitHub App is currently not publicly available due to API rate limiting constraints. We are working on making it available for public use in the future.
+
+For now, you can trigger iFlow CLI workflows through:
+- GitHub Actions (as shown in the examples)
+- GitHub CLI commands
+- Direct API calls to the iFlow platform
+
+We'll update this section once the GitHub App becomes publicly available.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
