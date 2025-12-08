@@ -511,6 +511,9 @@ fn test_github_actions_outputs_written() {
 // This test only runs on GitHub Actions. Locally it will be skipped.
 #[test]
 fn test_only_on_github_actions() {
+    use std::io::{BufRead, BufReader};
+    use std::thread;
+
     // If not running in GitHub Actions, skip the test by returning early.
     if std::env::var("GITHUB_ACTIONS").ok().as_deref() != Some("true") {
         eprintln!("Skipping test_only_on_github_actions: not running in GitHub Actions");
@@ -519,7 +522,8 @@ fn test_only_on_github_actions() {
 
     let api_key =
         std::env::var("CI_IFLOW_API_KEY").expect("IFLOW_API_KEY not set in GitHub Actions");
-    let output = Command::new("cargo")
+
+    let mut child = Command::new("cargo")
         .args([
             "run",
             "--bin",
@@ -530,13 +534,43 @@ fn test_only_on_github_actions() {
             "--api-key",
             api_key.as_str(),
         ])
-        .output()
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
         .expect("Failed to execute test");
-    println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-    println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+
+    // Handle stdout in real-time
+    if let Some(stdout) = child.stdout.take() {
+        let reader = BufReader::new(stdout);
+        thread::spawn(move || {
+            for line in reader.lines() {
+                match line {
+                    Ok(line) => println!("STDOUT: {}", line),
+                    Err(e) => eprintln!("Error reading stdout: {}", e),
+                }
+            }
+        });
+    }
+
+    // Handle stderr in real-time
+    if let Some(stderr) = child.stderr.take() {
+        let reader = BufReader::new(stderr);
+        thread::spawn(move || {
+            for line in reader.lines() {
+                match line {
+                    Ok(line) => eprintln!("STDERR: {}", line),
+                    Err(e) => eprintln!("Error reading stderr: {}", e),
+                }
+            }
+        });
+    }
+
+    // Wait for the process to complete
+    let status = child.wait().expect("Failed to wait for test process");
+
     assert!(
-        output.status.success(),
-        "Command failed with stderr: {}",
-        String::from_utf8_lossy(&output.stderr)
+        status.success(),
+        "Command failed with exit code: {:?}",
+        status.code()
     );
 }
