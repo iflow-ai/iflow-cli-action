@@ -10,28 +10,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Initialize project analysis
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
           prompt: "/init"
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "300"
-      
+
       - name: Generate documentation
         uses: iflow-ai/iflow-cli-action@v2.0.0
         with:
           prompt: "Generate comprehensive technical documentation including API docs, architecture overview, and usage examples based on the codebase analysis."
           api_key: ${{ secrets.IFLOW_API_KEY }}
-          model: "Qwen3-Coder"
+          model: "qwen3-coder-plus"
           timeout: "600"
         id: docs
-      
+
       - name: Create documentation file
         run: |
           mkdir -p docs
           echo "${{ steps.docs.outputs.result }}" > docs/TECHNICAL_DOCS.md
-      
+
       - name: Commit documentation
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

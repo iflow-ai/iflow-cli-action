@@ -65,7 +65,7 @@ fn test_configuration_with_settings_json() {
             "--prompt",
             "test prompt",
             "--settings-json",
-            r#"{"theme":"Default","selectedAuthType":"iflow","apiKey":"test-key","baseUrl":"https://apis.iflow.cn/v1","modelName":"Qwen3-Coder","searchApiKey":"test-key"}"#,
+            r#"{"theme":"Default","selectedAuthType":"iflow","apiKey":"test-key","baseUrl":"https://apis.iflow.cn/v1","modelName":"qwen3-coder-plus","searchApiKey":"test-key"}"#,
             "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),
@@ -88,7 +88,7 @@ fn test_configuration_with_settings_json() {
     assert!(content.contains("\"apiKey\": \"test-key\""));
     assert!(content.contains("\"selectedAuthType\": \"iflow\""));
     assert!(content.contains("\"baseUrl\": \"https://apis.iflow.cn/v1\""));
-    assert!(content.contains("\"modelName\": \"Qwen3-Coder\""));
+    assert!(content.contains("\"modelName\": \"qwen3-coder-plus\""));
 }
 
 #[test]
@@ -111,7 +111,7 @@ fn test_configuration_with_multiline_settings_json() {
             "--prompt",
             "test prompt",
             "--settings-json",
-            r#"{"theme":"Default","selectedAuthType":"iflow","apiKey":"test-key","baseUrl":"https://apis.iflow.cn/v1","modelName":"Qwen3-Coder","searchApiKey":"test-key","customField":"value\nwith\nnewlines"}"#,
+            r#"{"theme":"Default","selectedAuthType":"iflow","apiKey":"test-key","baseUrl":"https://apis.iflow.cn/v1","modelName":"qwen3-coder-plus","searchApiKey":"test-key","customField":"value\nwith\nnewlines"}"#,
             "--dry-run",
             "--settings-file-path",
             settings_file.to_str().unwrap(),

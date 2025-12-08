@@ -43,7 +43,7 @@ fn test_generate_summary_markdown_success() {
     let mut config_map = HashMap::new();
     config_map.insert("isTimeout", json!(false));
     config_map.insert("timeout", json!(3600));
-    config_map.insert("model", json!("Qwen3-Coder"));
+    config_map.insert("model", json!("qwen3-coder-plus"));
     config_map.insert("baseURL", json!("https://apis.iflow.cn/v1"));
     config_map.insert("workingDir", json!("."));
     config_map.insert("extraArgs", json!(""));
@@ -67,7 +67,7 @@ fn test_generate_summary_markdown_failure() {
     let mut config_map = HashMap::new();
     config_map.insert("isTimeout", json!(false));
     config_map.insert("timeout", json!(3600));
-    config_map.insert("model", json!("Qwen3-Coder"));
+    config_map.insert("model", json!("qwen3-coder-plus"));
     config_map.insert("baseURL", json!("https://apis.iflow.cn/v1"));
     config_map.insert("workingDir", json!("."));
     config_map.insert("extraArgs", json!(""));
@@ -90,7 +90,7 @@ fn test_generate_summary_markdown_timeout() {
     let mut config_map = HashMap::new();
     config_map.insert("isTimeout", json!(true));
     config_map.insert("timeout", json!(3600));
-    config_map.insert("model", json!("Qwen3-Coder"));
+    config_map.insert("model", json!("qwen3-coder-plus"));
     config_map.insert("baseURL", json!("https://apis.iflow.cn/v1"));
     config_map.insert("workingDir", json!("."));
     config_map.insert("extraArgs", json!(""));

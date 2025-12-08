@@ -20,7 +20,7 @@ pub fn generate_summary_markdown(
     let model_val = config
         .get("model")
         .and_then(|v| v.as_str())
-        .unwrap_or("Qwen3-Coder");
+        .unwrap_or("qwen3-coder-plus");
     let base_url_val = config
         .get("baseURL")
         .and_then(|v| v.as_str())

@@ -41,7 +41,7 @@ jobs:
       - name: Checkout PR branch
         uses: xt0rted/pull-request-comment-branch@v3.0.0
         id: checkout_pr
-        
+
       - name: Extract instructions from comment
         id: extract
         run: |
@@ -67,7 +67,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
@@ -105,9 +105,9 @@ jobs:
             - Ensure new code follows existing project conventions
             - Add or modify tests if applicable
             - Reference all shell variables as "${VAR}" (with quotes and braces)
-            
+
             ## Committing Changes
-            
+
             After implementing the changes:
             1. Stage all modified files
             2. Commit the changes with a descriptive message

@@ -217,7 +217,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
@@ -567,7 +567,7 @@ jobs:
         with:
           prompt: "Based on the project analysis, provide detailed architecture recommendations"
           api_key: ${{ secrets.IFLOW_API_KEY }}
-          model: "Qwen3-Coder"
+          model: "qwen3-coder-plus"
         id: arch
 
       - name: Performance Review
@@ -724,7 +724,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
@@ -1005,7 +1005,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {

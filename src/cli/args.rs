@@ -38,7 +38,7 @@ pub struct CliArgs {
     pub base_url: String,
 
     /// Model name to use
-    #[clap(long, env = "INPUT_MODEL", default_value = "Qwen3-Coder")]
+    #[clap(long, env = "INPUT_MODEL", default_value = "qwen3-coder-plus")]
     pub model: String,
 
     /// Working directory for execution

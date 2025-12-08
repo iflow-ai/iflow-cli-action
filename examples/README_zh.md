@@ -219,7 +219,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
@@ -518,7 +518,7 @@ jobs:
         with:
           prompt: "根据项目分析，提供详细的架构建议"
           api_key: ${{ secrets.IFLOW_API_KEY }}
-          model: "Qwen3-Coder"
+          model: "qwen3-coder-plus"
         id: arch
 
       - name: 性能审查
@@ -675,7 +675,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {
@@ -947,7 +947,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                   "github": {

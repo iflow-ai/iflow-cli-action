@@ -173,7 +173,7 @@ jobs:
 | `api_key` | iFlow API key for authentication | ✅ Yes | - |
 | `settings_json` | Complete `~/.iflow/settings.json` content (JSON string). If provided, this will override other configuration options. | ❌ No | - |
 | `base_url` | Custom base URL for iFlow API | ❌ No | `https://apis.iflow.cn/v1` |
-| `model` | Model name to use | ❌ No | `Qwen3-Coder` |
+| `model` | Model name to use | ❌ No | `qwen3-coder-plus` |
 | `working_directory` | Working directory to run iFlow CLI from | ❌ No | `.` |
 | `timeout` | Timeout for iFlow CLI execution in seconds (1-86400) | ❌ No | `86400` |
 | `precmd` | Shell command(s) to execute before running iFlow CLI (e.g., "npm install", "git fetch") | ❌ No | `` |
@@ -200,7 +200,7 @@ jobs:
 
 [Models](https://platform.iflow.cn/models)
 
-- `Qwen3-Coder` (default) - Excellent for code analysis and generation
+- `qwen3-coder-plus` (default) - Excellent for code analysis and generation
 - `kimi-k2-0905` - Good for general AI tasks and longer contexts
 - `glm-4.6` - Advanced reasoning and problem-solving
 - Custom models supported via OpenAI-compatible APIs
@@ -298,7 +298,7 @@ The following example demonstrates how to configure and use the DeepWiki MCP ser
         "selectedAuthType": "iflow",
         "apiKey": "${{ secrets.IFLOW_API_KEY }}",
         "baseUrl": "https://apis.iflow.cn/v1",
-        "modelName": "Qwen3-Coder",
+        "modelName": "qwen3-coder-plus",
         "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
         "mcpServers": {
           "deepwiki": {
@@ -307,7 +307,7 @@ The following example demonstrates how to configure and use the DeepWiki MCP ser
           }
         }
       }
-    model: "Qwen3-Coder"
+    model: "qwen3-coder-plus"
     timeout: "1800"
     debug: "true"
 ```

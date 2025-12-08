@@ -87,7 +87,7 @@ cargo tarpaulin
 ./target/release/iflow-cli-action --prompt "Analyze this code" --api-key YOUR_API_KEY
 
 # With custom model and timeout
-./target/release/iflow-cli-action --prompt "Review this PR" --api-key YOUR_API_KEY --model "Qwen3-Coder" --timeout 1800
+./target/release/iflow-cli-action --prompt "Review this PR" --api-key YOUR_API_KEY --model "qwen3-coder-plus" --timeout 1800
 
 # With pre-execution commands
 ./target/release/iflow-cli-action --prompt "Generate docs" --api-key YOUR_API_KEY --precmd "npm install && npm run build"
@@ -148,7 +148,7 @@ INPUT_PROMPT="Test" INPUT_API_KEY=your-key INPUT_GH_VERSION="2.76.2" INPUT_IFLOW
 | `api_key` | string | - | iFlow API key for authentication |
 | `settings_json` | string | - | Complete iFlow settings.json content (overrides other config) |
 | `base_url` | string | `https://apis.iflow.cn/v1` | Custom base URL for iFlow API |
-| `model` | string | `Qwen3-Coder` | Model name to use |
+| `model` | string | `qwen3-coder-plus` | Model name to use |
 | `working_directory` | string | `.` | Working directory to run from |
 | `timeout` | int | `3600` | Timeout in seconds (1-86400) |
 | `precmd` | string | - | Shell commands to run before iFlow |
@@ -346,7 +346,7 @@ The repository includes several example workflows:
   with:
     prompt: "Generate comprehensive documentation"
     api_key: ${{ secrets.IFLOW_API_KEY }}
-    model: "Qwen3-Coder"
+    model: "qwen3-coder-plus"
     timeout: 7200
     precmd: |
       npm install

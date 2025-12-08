@@ -32,7 +32,7 @@ jobs:
               "selectedAuthType": "iflow",
               "apiKey": "${{ secrets.CI_IFLOW_API_KEY }}",
               "baseUrl": "https://apis.iflow.cn/v1",
-              "modelName": "Qwen3-Coder",
+              "modelName": "qwen3-coder-plus",
               "searchApiKey": "${{ secrets.CI_IFLOW_API_KEY }}"
           }
           EOF

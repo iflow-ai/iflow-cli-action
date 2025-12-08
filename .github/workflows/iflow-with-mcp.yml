@@ -37,7 +37,7 @@ jobs:
                 "selectedAuthType": "iflow",
                 "apiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "baseUrl": "https://apis.iflow.cn/v1",
-                "modelName": "Qwen3-Coder",
+                "modelName": "qwen3-coder-plus",
                 "searchApiKey": "${{ secrets.IFLOW_API_KEY }}",
                 "mcpServers": {
                     "deepwiki": {
@@ -46,7 +46,7 @@ jobs:
                     }
                 }
             }
-          model: "Qwen3-Coder"
+          model: "qwen3-coder-plus"
           timeout: "3600"
           debug: "true"
           gh_version: "2.76.2"
