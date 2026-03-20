@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **iFlow CLI will be shutting down on April 17, 2026 (UTC+8).** Thank you for every moment with iFlow CLI in your terminal. For details and migration guidance, please see our [farewell post](https://vibex.iflow.cn/t/topic/4819).
+
+---
+
 # ![iflow-icon-ai](./assets/icon.png) iFlow CLI GitHub Action
 
 ![GitHub License](https://img.shields.io/github/license/iflow-ai/iflow-cli-action) [![iFlow with MCP](https://github.com/iflow-ai/iflow-cli-action/actions/workflows/iflow-with-mcp.yml/badge.svg)](https://github.com/iflow-ai/iflow-cli-action/actions/workflows/iflow-with-mcp.yml) [![codecov](https://codecov.io/gh/vibe-ideas/iflow-cli-action/graph/badge.svg?token=d7IGlAGhlN)](https://codecov.io/gh/vibe-ideas/iflow-cli-action) ![GitHub Release](https://img.shields.io/github/v/release/iflow-ai/iflow-cli-action)
