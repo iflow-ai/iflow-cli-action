@@ -2,16 +2,16 @@ name: Build and Deploy Homepage
 
 on:
   # Run every day at 02:00 UTC
-  schedule:
-    - cron: '0 2 * * *'
+  # schedule:
+  #   - cron: '0 2 * * *'
   # Allow manual trigger
   workflow_dispatch:
   # Also run on pushes to main branch
   push:
-    branches: [ main ]
-    paths:
-      - 'README.md'
-      - 'README_zh.md'
+    # branches: [ main ]
+    # paths:
+    #   - 'README.md'
+    #   - 'README_zh.md'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
