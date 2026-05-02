@@ -7,12 +7,12 @@ on:
   #     - completed
   # Allow manual trigger
   workflow_dispatch:
-  push:
-    # Ignore tag pushes so creating or pushing tags won't trigger this workflow
-    tags-ignore: ['*']
-    paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
-  pull_request:
-    paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
+  # push:
+  #   # Ignore tag pushes so creating or pushing tags won't trigger this workflow
+  #   tags-ignore: ['*']
+  #   paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
+  # pull_request:
+  #   paths: ['**/*.rs', 'Cargo.toml', 'Cargo.lock', 'tests/**', 'examples/**']
 
 
 permissions:

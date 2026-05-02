@@ -1,13 +1,13 @@
 name: '🏷️ iFLOW CLI Automated Issue Triage'
 
 on:
-  issues:
-    types:
-      - 'opened'
-      - 'reopened'
-  issue_comment:
-    types:
-      - 'created'
+  # issues:
+  #   types:
+  #     - 'opened'
+  #     - 'reopened'
+  # issue_comment:
+  #   types:
+  #     - 'created'
   workflow_dispatch:
     inputs:
       issue_number:

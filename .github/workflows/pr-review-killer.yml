@@ -1,9 +1,11 @@
 name: '🚀 iFlow CLI PR Review Killer'
 
 on:
-  issue_comment:
-    types:
-      - 'created'
+  # issue_comment:
+  #   types:
+  #     - 'created'
+  # Allow manual trigger
+  workflow_dispatch:
 
 concurrency:
   group: '${{ github.workflow }}-${{ github.event.issue.number }}'

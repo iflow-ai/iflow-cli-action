@@ -1,9 +1,9 @@
 name: Release Rust binaries
 
 on:
-  push:
-    tags:
-      - 'v*'
+  # push:
+  #   tags:
+  #     - 'v*'
   # Optional: allow manual trigger for testing (does not create a Release, artifacts are uploaded)
   workflow_dispatch: {}
 
